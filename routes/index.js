@@ -10,7 +10,7 @@ router.get('/', function(req, res, next) {
 router.get('/api/users', db.getAllUsers);
 router.get('/api/users/:username', db.getSingleUser);
 router.post('/api/users', db.createUser);
-router.put('/api/users/:id', db.updateUser);
+router.post('/api/users/updatePassword/', db.updateUser);
 
 
 module.exports = router;

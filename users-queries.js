@@ -63,8 +63,25 @@ function createUser(req, res, next) {
     });
 }
 
+// Update password
 function updateUser(req, res, next) {
+  var username = req.query.username;
+  var password = req.query.password;
+  var hashed = bcrypt.hashSync(password);
 
+  db.any('UPDATE Users SET PasswordEncrypted=${password} WHERE Username = ${username}', {username: username, password: hashed})
+    .then(function(data) {
+      res.status(200)
+        .json({
+          status: 'success',
+          data: data,
+          message: 'Updated ONE user'
+        });
+    })
+    .catch(function (err) {
+      console.log("error");
+      return next(err);
+    });
 }
 
 
