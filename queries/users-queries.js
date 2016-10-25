@@ -58,7 +58,6 @@ function createUser(req, res, next) {
         });
     })
     .catch(function (err) {
-      console.log("error");
       return next(err);
     });
 }
