@@ -1,1 +1,6 @@
-Blog post >> http://mherman.org/blog/2015/10/22/node-postgres-sequelize/#.VijvshNViko
+# PalPay
+
+### Setup (Mac OSX)
+
+Download and run [Postgres App](http://www.postgresapp.com) (run on port 5432).
+Run `sh setup.sh` in terminal.
