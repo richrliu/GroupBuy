@@ -1,4 +1,4 @@
-# GroupBuy
+# PalPay
 ## Duke CS 316 Final Project
 
 #### Setup (Mac OSX)
@@ -8,7 +8,7 @@ Download and install [Postgres App](http://postgresapp.com/).
 
 Run `npm install`
 
-Run `pqsl -f data_init.sql`
+Run `psql -f data_init.sql`
 
 Run `npm start` and go to `http://localhost:3000`
 
