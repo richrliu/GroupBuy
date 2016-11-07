@@ -28,4 +28,24 @@ router.get('/users', function(req, res) {
   });
 });
 
+//-- PROFILE ENDPOINTS
+router.put('/profile/:username', function(req, res) {
+  console.log(req.params);
+  console.log(req.query);
+  models.Profile.find({
+    where: {
+      UserUsername: req.params.username
+    }
+  }).then(function(profile) {
+    if(profile){
+      profile.updateAttributes({
+        PictureURL: req.query.PictureURL,
+        Description: req.query.Description
+      }).then(function(new_profile) {
+        res.send(new_profile);
+      });
+    }
+  });
+});
+
 module.exports = router;
