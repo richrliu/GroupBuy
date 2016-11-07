@@ -30,6 +30,14 @@ Object.keys(db).forEach(function(modelName) {
   }
 });
 
+sequelize
+  .sync({'force': true})
+  .then(function(err){
+    console.log("nice.");
+  }, function(err) {
+    console.log(err);
+  });
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 

@@ -15,6 +15,9 @@ router.post('/users', function(req, res) {
     Password: hashedPW,
     Ranking: req.query.Ranking
   }).then(function(user) {
+    models.Profile.create({
+      UserUsername: req.query.Username
+    });
     res.json(user);
   });
 });
