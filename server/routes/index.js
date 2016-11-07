@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var models = require('../models/index');
-
+var bcrypt = require('bcrypt-node');
 
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -9,10 +9,10 @@ router.get('/', function(req, res, next) {
 
 //-- USER ENDPOINTS
 router.post('/users', function(req, res) {
-  console.log(req);
+  var hashedPW = bcrypt.hashSync(req.query.Password);
   models.Users.create({
     Username: req.query.Username,
-    Password: req.query.Password,
+    Password: hashedPW,
     Ranking: req.query.Ranking
   }).then(function(user) {
     res.json(user);
