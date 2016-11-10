@@ -30,8 +30,6 @@ router.get('/users', function(req, res) {
 
 //-- PROFILE ENDPOINTS
 router.put('/profile/:username', function(req, res) {
-  console.log(req.params);
-  console.log(req.query);
   models.Profile.find({
     where: {
       UserUsername: req.params.username
@@ -47,5 +45,21 @@ router.put('/profile/:username', function(req, res) {
     }
   });
 });
+
+//-- LOAN ENDPOINTS
+router.post('/loan', function(req, res) {
+  models.Loan.create({
+    Amount: req.query.amount,
+    ExpectedEndDate: req.query.expectedEndDate,
+    InterestRate: req.query.interestRate,
+    AmountRemaining: req.query.amountRemaining,
+    Lender: req.query.lender,
+    Receiver: req.query.receiver
+  }).then(function(loan) {
+    res.json(loan);
+  });
+});
+
+
 
 module.exports = router;
