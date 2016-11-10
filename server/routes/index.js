@@ -61,5 +61,16 @@ router.post('/loan', function(req, res) {
 });
 
 
+//-- MESSAGE ENDPOITNS
+router.post('/message', function(req, res) {
+  models.Message.create({
+    Text: req.query.text,
+    TimeSent: new Date(),
+    SenderName: req.query.senderName, //TODO: Update sender using cookies n shit
+    ReceiverName: req.query.receiverName 
+  }).then(function(loan) {
+    res.json(loan);
+  });
+});
 
 module.exports = router;
