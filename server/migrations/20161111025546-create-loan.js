@@ -1,0 +1,36 @@
+'use strict';
+module.exports = {
+  up: function(queryInterface, Sequelize) {
+    return queryInterface.createTable('loans', {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: Sequelize.INTEGER
+      },
+      CompletionStatus: {
+        type: Sequelize.BOOLEAN
+      },
+      Amount: {
+        type: Sequelize.FLOAT
+      },
+      ExpectedEndDate: {
+        type: Sequelize.DATE
+      },
+      InterestRate: {
+        type: Sequelize.FLOAT
+      },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      }
+    });
+  },
+  down: function(queryInterface, Sequelize) {
+    return queryInterface.dropTable('loans');
+  }
+};

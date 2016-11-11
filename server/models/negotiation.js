@@ -10,7 +10,7 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         // associations can be defined here
         Negotiation.hasMany(models.Proposal);
-        Negotiation.hasOne(modles.Loan);
+        Negotiation.hasOne(models.Loan);
         Negotiation.belongsTo(models.Users, {foreignKey: 'Lender'});
         Negotiation.belongsTo(models.Users, {foreignKey: 'Receiver'});
       }
