@@ -8,13 +8,27 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/login', function(req, res, next) {
-  var username = req.query.Username;
-  // var hashedPW = bcrypt.hashSync(req.query.Password);
-  var hashedPW = md5(req.query.Password);
-  models.Users.findOne({
-    where: {username: username, password: hashedPW}
-  }).then(function(user) {
-    res.json(user);
+  var username = req.body.Username;
+  var hashedPW = md5(req.body.Password);
+  models.Users.findOne({where: {Username: username, Password: hashedPW}}).then(function(user) {
+    if (user === null) {
+      console.log("user not found");
+      res.render('index', { title: 'PalPay', error: 'User Not Found' });
+    } else {
+      var cookie = req.cookies.cookieName;
+      console.log(user);
+      if (cookie === undefined)
+      {
+        res.cookie('userLogin', user);
+        console.log('cookie created successfully');
+      }
+      else
+      {
+        // yes, cookie was already present 
+        console.log('cookie exists', cookie);
+      }
+      res.render('home', { uName: user.dataValues.Username });
+    }
   });
 });
 
