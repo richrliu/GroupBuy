@@ -27,7 +27,7 @@ router.post('/login', function(req, res, next) {
         // yes, cookie was already present 
         console.log('cookie exists', cookie);
       }
-      res.render('home', { uName: user.dataValues.Username });
+      res.render('home', { user: JSON.stringify(user.dataValues) });
     }
   });
 });
