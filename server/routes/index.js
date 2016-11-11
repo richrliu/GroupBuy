@@ -11,18 +11,25 @@ router.post('/login', function(req, res, next) {
   var username = req.query.Username;
   var hashedPW = bcrypt.hashSync(req.query.Password);
   models.Users.findOne({username: username, password: hashedPW}).then(function(user) {
-    var cookie = req.cookies.cookieName;
-    if (cookie === undefined)
-    {
-      res.cookie('userLogin', user);
-      console.log('cookie created successfully');
+    if (user == null) {
+      console.log("user not found");
+      res.render('index', { title: 'PalPay', error: 'user_not_found' });
+    } else {
+      var cookie = req.cookies.cookieName;
+      console.log(user);
+      if (cookie === undefined)
+      {
+        res.cookie('userLogin', user);
+        console.log('cookie created successfully');
+      }
+      else
+      {
+        // yes, cookie was already present 
+        console.log('cookie exists', cookie);
+      }
+      res.render('home', { u: user });
     }
-    else
-    {
-      // yes, cookie was already present 
-      console.log('cookie exists', cookie);
-    }
-    res.json(user);
+    
   });
 });
 
