@@ -10,7 +10,6 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         // associations can be defined here
-        Message.hasMany(models.Users);
         Message.belongsTo(models.Users, {foreignKey: 'SenderName'});
         Message.belongsTo(models.Users, {foreignKey: 'ReceiverName'});
       }
