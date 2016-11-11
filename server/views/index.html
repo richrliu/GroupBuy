@@ -10,6 +10,18 @@
     <h1>{{ title }}</h1>
     <p>Welcome to {{ title }}</p>
 
+    <form method="post" id="login-form" action="/login">
+	  <div class="form-group">
+	    <label for="Username">Username:</label>
+	    <input type="Username" class="form-control" id="Username">
+	  </div>
+	  <div class="form-group">
+	    <label for="Password">Password:</label>
+	    <input type="password" class="form-control" id="password">
+	  </div>
+	  <button type="submit" class="btn btn-default">Submit</button>
+	</form>
+
   </div>
 
 {% endblock %}
