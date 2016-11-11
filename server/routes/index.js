@@ -4,7 +4,15 @@ var models = require('../models/index');
 var bcrypt = require('bcrypt-node');
 
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  res.render('index', { title: 'PalPay' });
+});
+
+router.post('/login', function(req, res, next) {
+  var username = req.query.Username;
+  var hashedPW = bcrypt.hashSync(req.query.Password);
+  models.Users.findOne({username: username, password: hashedPW}).then(function(user) {
+    res.json(user);
+  });
 });
 
 //-- USER ENDPOINTS
