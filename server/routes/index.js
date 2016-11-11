@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var models = require('../models/index');
-var bcrypt = require('bcrypt-node');
+var md5 = require('blueimp-md5');
 
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'PalPay' });
@@ -9,15 +9,31 @@ router.get('/', function(req, res, next) {
 
 router.post('/login', function(req, res, next) {
   var username = req.query.Username;
-  var hashedPW = bcrypt.hashSync(req.query.Password);
-  models.Users.findOne({username: username, password: hashedPW}).then(function(user) {
+  // var hashedPW = bcrypt.hashSync(req.query.Password);
+  var hashedPW = md5(req.query.Password);
+  models.Users.findOne({
+    where: {username: username, password: hashedPW}
+  }).then(function(user) {
     res.json(user);
   });
 });
 
+router.post('/register', function(req, res, next) {
+  var username = req.body.UsernameRegistration;
+  var hashedPW = md5(req.body.PasswordRegistration);
+  var hashedPWConfirm = md5(req.body.ConfirmPasswordRegistration);
+  if (hashedPW == hashedPWConfirm) {
+    models.Users.create({Username: username, Password: hashedPW}).then(function(user) {
+      res.json(user);
+    });
+  } else {
+    
+  }
+});
+
 //-- USER ENDPOINTS
 router.post('/users', function(req, res) {
-  var hashedPW = bcrypt.hashSync(req.query.Password);
+  var hashedPW = md5(req.query.Password);
   models.Users.create({
     Username: req.query.Username,
     Password: hashedPW,

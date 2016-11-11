@@ -13,13 +13,45 @@
     <form method="post" id="login-form" action="/login">
 	  <div class="form-group">
 	    <label for="Username">Username:</label>
-	    <input type="Username" class="form-control" id="Username">
+	    <input type="text" class="form-control" id="Username">
 	  </div>
 	  <div class="form-group">
 	    <label for="Password">Password:</label>
-	    <input type="password" class="form-control" id="password">
+	    <input type="password" class="form-control" id="Password">
 	  </div>
-	  <button type="submit" class="btn btn-default">Submit</button>
+	  <input type="submit" class="form-control" />
+	</form>
+
+	<!-- <form method="post" id="registration-form" action="/register"> 
+	  <div class="form-group">
+	    <label for="UsernameRegistration">Username:</label>
+	    <input type="text" class="form-control" id="UsernameRegistration">
+	  </div>
+	  <div class="form-group">
+	    <label for="PasswordRegistration">Password:</label>
+	    <input type="password" class="form-control" id="PasswordRegistration">
+	  </div>
+	  <div class="form-group">
+	    <label for="ConfirmPasswordRegistration">Confirm Password:</label>
+	    <input type="password" class="form-control" id="ConfirmPasswordRegistration">
+	  </div>
+	  <input type="submit" class="form-control" />
+	</form> -->
+
+	<form method="post" id="registration-form" action="/register"> 
+	  <div class="form-group">
+	    <label for="UsernameRegistration">Username:</label>
+	    <input type="text" class="form-control" id="UsernameRegistration" name="UsernameRegistration">
+	  </div>
+	  <div class="form-group">
+	    <label for="PasswordRegistration">Password:</label>
+	    <input type="password" class="form-control" id="PasswordRegistration" name="PasswordRegistration">
+	  </div>
+	  <div class="form-group">
+	    <label for="ConfirmPasswordRegistration">Confirm Password:</label>
+	    <input type="password" class="form-control" id="ConfirmPasswordRegistration" name="ConfirmPasswordRegistration">
+	  </div>
+	  <input type="submit" class="form-control" />
 	</form>
 
   </div>
