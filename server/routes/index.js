@@ -1,17 +1,17 @@
 var express = require('express');
 var router = express.Router();
 var models = require('../models/index');
-var bcrypt = require('bcrypt-node');
+var md5 = require('blueimp-md5');
 
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'PalPay' });
 });
 
 router.post('/login', function(req, res, next) {
-  var username = req.query.Username;
-  var hashedPW = bcrypt.hashSync(req.query.Password);
-  models.Users.findOne({username: username, password: hashedPW}).then(function(user) {
-    if (user == null) {
+  var username = req.body.Username;
+  var hashedPW = md5(req.body.Password);
+  models.Users.findOne({where: {Username: username, Password: hashedPW}}).then(function(user) {
+    if (user === null) {
       console.log("user not found");
       res.render('index', { title: 'PalPay', error: 'User Not Found' });
     } else {
@@ -27,15 +27,27 @@ router.post('/login', function(req, res, next) {
         // yes, cookie was already present 
         console.log('cookie exists', cookie);
       }
-      res.render('home', { u: user });
+      res.render('home', { uName: user.dataValues.Username });
     }
-    
   });
+});
+
+router.post('/register', function(req, res, next) {
+  var username = req.body.UsernameRegistration;
+  var hashedPW = md5(req.body.PasswordRegistration);
+  var hashedPWConfirm = md5(req.body.ConfirmPasswordRegistration);
+  if (hashedPW == hashedPWConfirm) {
+    models.Users.create({Username: username, Password: hashedPW}).then(function(user) {
+      res.json(user);
+    });
+  } else {
+    
+  }
 });
 
 //-- USER ENDPOINTS
 router.post('/users', function(req, res) {
-  var hashedPW = bcrypt.hashSync(req.query.Password);
+  var hashedPW = md5(req.query.Password);
   models.Users.create({
     Username: req.query.Username,
     Password: hashedPW,
