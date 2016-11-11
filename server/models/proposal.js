@@ -1,10 +1,13 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
-  var Loan = sequelize.define('Loan', {
-    CompletionStatus: {
+  var Proposal = sequelize.define('Proposal', {
+    AcceptedStatus: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
     },
+    SenderID: DataTypes.STRING,
+    ReceiverID: DataTypes.STRING,
+    CreationTime: DataTypes.DATE,
     Amount: DataTypes.FLOAT,
     ExpectedEndDate: DataTypes.DATE,
     InterestRate: DataTypes.FLOAT
@@ -12,12 +15,9 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         // associations can be defined here
-        Loan.hasMany(models.Payment);
-        Loan.belongsTo(models.Users, {foreignKey: 'Lender'});
-        Loan.belongsTo(models.Users, {foreignKey: 'Receiver'});
-        Loan.belongsTo(models.Negotiation);
+        Proposal.belongsTo(models.Negotiation);
       }
     }
   });
-  return Loan;
+  return Proposal;
 };
