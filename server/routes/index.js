@@ -13,7 +13,7 @@ router.post('/login', function(req, res, next) {
   models.Users.findOne({username: username, password: hashedPW}).then(function(user) {
     if (user == null) {
       console.log("user not found");
-      res.render('index', { title: 'PalPay', error: 'user_not_found' });
+      res.render('index', { title: 'PalPay', error: 'User Not Found' });
     } else {
       var cookie = req.cookies.cookieName;
       console.log(user);

@@ -6,11 +6,8 @@
 {% block content %}
 
   <div class="container">
-
     <h1>{{ title }}</h1>
-    <p>Welcome to {{ title }}</p>
-    <p>{{ user_not_found }}</p>
-
+    <h6>{{ error }}</h6>
     <form method="post" id="login-form" action="/login">
 	  <div class="form-group">
 	    <label for="Username">Username:</label>
