@@ -24,7 +24,7 @@ router.post('/login', function(req, res, next) {
       }
       else
       {
-        // yes, cookie was already present 
+        // yes, cookie was already present
         console.log('cookie exists', cookie);
       }
       res.render('home', { user: JSON.stringify(user.dataValues) });
@@ -41,7 +41,7 @@ router.post('/register', function(req, res, next) {
       res.json(user);
     });
   } else {
-    
+
   }
 });
 
@@ -105,7 +105,7 @@ router.post('/message', function(req, res) {
     Text: req.query.text,
     TimeSent: new Date(),
     SenderName: req.query.senderName, //TODO: Update sender using cookies n shit
-    ReceiverName: req.query.receiverName 
+    ReceiverName: req.query.receiverName
   }).then(function(loan) {
     res.json(loan);
   });
