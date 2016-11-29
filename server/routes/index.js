@@ -71,9 +71,15 @@ router.post('/register', function(req, res, next) {
   var hashedPW = md5(req.body.PasswordRegistration);
   var hashedPWConfirm = md5(req.body.ConfirmPasswordRegistration);
   if (hashedPW == hashedPWConfirm) {
-    models.Users.create({Username: username, Password: hashedPW}).then(function(user) {
-      req.session.loggedinuser = user.dataValues; //this is what logs users in
-      redirectLogin(req, res);
+    models.Users.findOne({where: {Username: username, Password: hashedPW}}).then(function(user) {
+      if (user === null) {
+        models.Users.create({Username: username, Password: hashedPW}).then(function(user) {
+          req.session.loggedinuser = user.dataValues; //this is what logs users in
+          redirectLogin(req, res);
+        });
+      } else {
+        res.render('index', { error: 'User already exists. Did you forgot your password?' });
+      }
     });
   } else {
     res.render('index', { error: 'Passwords didn\'t match.' });
