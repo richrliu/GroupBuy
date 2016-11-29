@@ -7,6 +7,29 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'PalPay' });
 });
 
+router.get('/newLoan', function (req, res, next) {
+  res.render('newLoan');
+});
+
+router.post('/newLoan', function (req, res, next) {
+  var lender = req.body.LoanLender;
+  var receiver = req.body.LoanReceiver;
+  var amount = req.body.LoanAmount;
+  var endDate = req.body.LoanEndDate;
+  var interestRate = req.body.LoanInterestRate;
+
+  models.Loan.create({
+    Amount: amount,
+    ExpectedEndDate: endDate,
+    InterestRate: interestRate,
+    AmountRemaining: amount,
+    Lender: lender,
+    Receiver: receiver
+  }).then(function(loan) {
+    res.json(loan);
+  });
+});
+
 router.post('/login', function(req, res, next) {
   var username = req.body.Username;
   var hashedPW = md5(req.body.Password);
