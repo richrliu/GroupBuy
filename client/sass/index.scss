@@ -2,6 +2,14 @@ body {
     background-color: #1c5be7;
 }
 
+.error-box {
+  color: red;
+  background-color: white;
+  border-radius: 2px;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
 .container {
     display: flex;
     flex-direction: column;

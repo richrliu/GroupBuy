@@ -5,42 +5,9 @@
 
 {% block content %}
 
-<<<<<<< HEAD
-  <div class="container">
-    <h1>PalPay</h1>
-    <h6 style="color:red">{{ error }}</h6>
-    <form method="post" id="login-form" action="/login">
-	  <div class="form-group">
-	    <label for="Username">Username:</label>
-	    <input type="text" class="form-control" id="Username" name="Username">
-	  </div>
-	  <div class="form-group">
-	    <label for="Password">Password:</label>
-	    <input type="password" class="form-control" id="Password" name="Password">
-	  </div>
-	  <input type="submit" class="form-control" />
-	</form>
-
-	<form method="post" id="registration-form" action="/register">
-	  <div class="form-group">
-	    <label for="UsernameRegistration">Username:</label>
-	    <input type="text" class="form-control" id="UsernameRegistration" name="UsernameRegistration">
-	  </div>
-	  <div class="form-group">
-	    <label for="PasswordRegistration">Password:</label>
-	    <input type="password" class="form-control" id="PasswordRegistration" name="PasswordRegistration">
-	  </div>
-	  <div class="form-group">
-	    <label for="ConfirmPasswordRegistration">Confirm Password:</label>
-	    <input type="password" class="form-control" id="ConfirmPasswordRegistration" name="ConfirmPasswordRegistration">
-	  </div>
-	  <input type="submit" class="form-control" />
-	</form>
-  </div>
-=======
 <div class="container">
-    <h1>Welcome to {{ title }}!</h1>
-    <h6>{{ error }}</h6>
+    <h1>Welcome to PalPay!</h1>
+    <h6 class="error-box">{{ error }}</h6>
     <div class="login-register">
         <div class="form-group">
             <h2>Log In</h2>
@@ -72,6 +39,5 @@
         </div>
     </div>
 </div>
->>>>>>> master
 
 {% endblock %}
