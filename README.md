@@ -18,4 +18,4 @@ To add constraints to the above model, go to `/server/models/` and find the corr
 
 If you add models, run `node_modules/.bin/sequelize db:migrate`.
 
-If you make changes to any models, run `node_modules/.bin/sequelize db:migrate --force`, which will overwrite your existing database.
+If you make changes to any models, run `node_modules/.bin/sequelize db:migrate:undo:all` and then `node_modules/.bin/sequelize db:migrate`, which will overwrite your existing database.

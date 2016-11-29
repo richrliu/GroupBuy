@@ -84,6 +84,18 @@ router.put('/profile/:username', function(req, res) {
   });
 });
 
+//-- VENMODATA ENDPOINTS
+router.post('/venmodata', function(req, res) {
+  models.VenmoData.create({
+    AccessToken: req.query.AccessToken,
+    PhoneNumber: req.query.PhoneNumber,
+    UserID: req.query.UserID,
+    Email: req.query.Email
+  }).then(function(vdata) {
+    res.json(vdata);
+  });
+});
+
 //-- LOAN ENDPOINTS
 router.post('/loan', function(req, res) {
   models.Loan.create({
