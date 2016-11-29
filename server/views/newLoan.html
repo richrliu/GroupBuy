@@ -5,33 +5,37 @@
 
 {% block content %}
 
-  <div class="container">
+<div class="container">
+    {% include 'sidebar.html' %}
 
-    <h1>Create a New Loan Proposal</h1>
-    <form method="post" id="registration-form" action="/newLoan"> 
-      <p>Lender username</p>
-      <div class="form-group">
-        <input type="text" class="form-control" id="LoanLender" name="LoanLender">
-      </div>
-      <p>Borrower username</p>
-      <div class="form-group">
-        <input type="text" class="form-control" id="LoanReceiver" name="LoanReceiver">
-      </div>
-      <p>Amount</p>
-      <div class="form-group">
-        <input type="text" class="form-control" id="LoanAmount" name="LoanAmount">
-      </div>
-      <p>End Date</p>
-      <div class="form-group">
-        <input type="date" class="form-control" id="LoanEndDate" name="LoanEndDate">
-      </div>
-      <p>Interest Rate</p>
-      <div class="form-group">
-        <input type="text" class="form-control" id="LoanInterestRate" name="LoanInterestRate">
-      </div>
-      <input type="submit" class="form-control" />
-    </form>
-
-  </div>
+    <div id="new-loan">
+        <div class="loan-group">
+            <h1>New Loan</h1>
+            <form method="post" id="registration-form" action="/newLoan">
+              <div class="form-element">
+                  <p>Lender Username</p>
+                  <input type="text" class="form-control" id="LoanLender" name="LoanLender">
+              </div>
+              <div class="form-element">
+                  <p>Borrower Username</p>
+                  <input type="text" class="form-control" id="LoanReceiver" name="LoanReceiver">
+              </div>
+              <div class="form-element">
+                  <p>Amount</p>
+                  <input type="text" class="form-control" id="LoanAmount" name="LoanAmount">
+              </div>
+              <div class="form-element">
+                  <p>End Date</p>
+                  <input type="date" class="form-control" id="LoanEndDate" name="LoanEndDate">
+              </div>
+              <div class="form-element">
+                  <p>Interest Rate</p>
+                  <input type="text" class="form-control" id="LoanInterestRate" name="LoanInterestRate">
+              </div>
+              <input type="submit" class="form-control" id="submit-btn"/>
+            </form>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
