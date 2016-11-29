@@ -38,6 +38,14 @@ table {
   border-collapse: collapse;
   border-spacing: 0; }
 
+#submit-btn {
+  margin-top: 25px;
+  background-color: #6db56d;
+  border: none;
+  color: #ffffff; }
+  #submit-btn:hover {
+    background-color: #509f50; }
+
 .container {
   width: 100%;
   padding: 0;
@@ -93,11 +101,6 @@ table {
             margin-bottom: 10px; }
             .container #landing .login-register .form-group .form-body .form-element label {
               margin-bottom: 5px; }
-          .container #landing .login-register .form-group .form-body #submit-btn {
-            margin-top: 25px;
-            background-color: #6db56d;
-            border: none;
-            color: #ffffff; }
 
 #new-loan {
   width: 100%;
@@ -124,11 +127,6 @@ table {
       #new-loan .loan-group .form-element p {
         color: #000000;
         margin-bottom: 5px; }
-    #new-loan .loan-group #submit-btn {
-      background-color: #6db56d;
-      color: white;
-      border: none;
-      margin-top: 25px; }
 
 #sidebar {
   width: 25%;

@@ -1,3 +1,13 @@
+#submit-btn {
+    margin-top: 25px;
+    background-color: #6db56d;
+    border: none;
+    color: #ffffff;
+
+    &:hover {
+        background-color: darken(#6db56d, 10%);
+    }
+}
 
 .container {
     width: 100%;
@@ -55,13 +65,6 @@
                         label {
                             margin-bottom: 5px;
                         }
-                    }
-
-                    #submit-btn {
-                        margin-top: 25px;
-                        background-color: #6db56d;
-                        border: none;
-                        color: #ffffff;
                     }
                 }
             }
