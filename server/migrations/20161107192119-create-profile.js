@@ -9,10 +9,12 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       PictureURL: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        defaultValue: ""
       },
       Description: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        defaultValue: ""
       },
       createdAt: {
         allowNull: false,

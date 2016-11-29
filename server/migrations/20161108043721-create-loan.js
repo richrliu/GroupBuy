@@ -9,7 +9,8 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       CompletionStatus: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        defaultValue: false
       },
       Amount: {
         type: Sequelize.FLOAT

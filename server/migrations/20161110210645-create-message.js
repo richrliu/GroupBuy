@@ -9,7 +9,8 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       Text: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       TimeSent: {
         type: Sequelize.DATE
