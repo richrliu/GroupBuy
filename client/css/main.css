@@ -1,8 +1,94 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-}
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  vertical-align: baseline; }
 
-a {
-  color: #00B7FF;
-}
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block; }
+
+body {
+  line-height: 1; }
+
+ol, ul {
+  list-style: none; }
+
+blockquote, q {
+  quotes: none; }
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0; }
+
+body {
+  background-color: #1c5be7; }
+
+.container {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+      flex-direction: column;
+  -ms-flex-pack: center;
+      justify-content: center;
+  -ms-flex-align: center;
+      align-items: center;
+  margin-top: 75px; }
+  .container h1 {
+    font-size: 50px;
+    margin-bottom: 75px;
+    color: white; }
+  .container .login-register {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: row;
+        flex-direction: row;
+    -ms-flex-pack: justify;
+        justify-content: space-between;
+    width: 75%; }
+    .container .login-register .divider {
+      border: 0.5px solid white; }
+    .container .login-register .form-group {
+      margin: 25px 0;
+      border-radius: 10px;
+      background-color: white;
+      width: 350px;
+      padding: 35px;
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-direction: column;
+          flex-direction: column; }
+      .container .login-register .form-group h2 {
+        font-size: 25px;
+        -ms-flex-item-align: center;
+            -ms-grid-row-align: center;
+            align-self: center;
+        margin-bottom: 25px; }
+      .container .login-register .form-group .form-body {
+        margin-bottom: 10px; }
+        .container .login-register .form-group .form-body .form-element {
+          margin-bottom: 10px; }
+          .container .login-register .form-group .form-body .form-element label {
+            margin-bottom: 5px; }
+        .container .login-register .form-group .form-body #submit-btn {
+          margin-top: 25px;
+          background-color: #6db56d;
+          border: none;
+          color: #ffffff; }

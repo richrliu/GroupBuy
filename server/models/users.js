@@ -13,6 +13,7 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         // associations can be defined here
         Users.hasOne(models.Profile);
+        Users.hasOne(models.VenmoData);
       }
     }
   });
