@@ -3,8 +3,26 @@ var router = express.Router();
 var models = require('../models/index');
 var md5 = require('blueimp-md5');
 
+//Redirect to index or home, depending on loggedinuser
+function redirectLogin(req, res) {
+  if (!verifyLogin(req, res)) {
+    res.render('index');
+    return;
+  }
+}
+
+//Return false if not logged in, otherwise redirect
+function verifyLogin(req, res) {
+  if (req.session.loggedinuser) {
+    res.render('home', { user: JSON.stringify(req.session.loggedinuser) });
+    return true;
+  } else {
+    return false;
+  }
+}
+
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'PalPay' });
+  redirectLogin(req, res);
 });
 
 router.post('/login', function(req, res, next) {
@@ -12,24 +30,17 @@ router.post('/login', function(req, res, next) {
   var hashedPW = md5(req.body.Password);
   models.Users.findOne({where: {Username: username, Password: hashedPW}}).then(function(user) {
     if (user === null) {
-      console.log("user not found");
-      res.render('index', { title: 'PalPay', error: 'User Not Found' });
+      res.render('index', { error: 'User/Password not found.' });
     } else {
-      var cookie = req.cookies.cookieName;
-      console.log(user);
-      if (cookie === undefined)
-      {
-        res.cookie('userLogin', user);
-        console.log('cookie created successfully');
-      }
-      else
-      {
-        // yes, cookie was already present 
-        console.log('cookie exists', cookie);
-      }
-      res.render('home', { user: JSON.stringify(user.dataValues) });
+      req.session.loggedinuser = user.dataValues; //this is what logs users in
+      redirectLogin(req, res);
     }
   });
+});
+
+router.all('/logout', function(req, res, next) {
+  req.session = null;
+  res.render('index', { error: 'Logged out.' });
 });
 
 router.post('/register', function(req, res, next) {
@@ -38,15 +49,17 @@ router.post('/register', function(req, res, next) {
   var hashedPWConfirm = md5(req.body.ConfirmPasswordRegistration);
   if (hashedPW == hashedPWConfirm) {
     models.Users.create({Username: username, Password: hashedPW}).then(function(user) {
-      res.json(user);
+      req.session.loggedinuser = user.dataValues; //this is what logs users in
+      redirectLogin(req, res);
     });
   } else {
-    
+    res.render('index', { error: 'Passwords didn\'t match.' });
   }
 });
 
 //-- USER ENDPOINTS
 router.post('/users', function(req, res) {
+  verifyLogin(req, res);
   var hashedPW = md5(req.query.Password);
   models.Users.create({
     Username: req.query.Username,
@@ -61,6 +74,7 @@ router.post('/users', function(req, res) {
 });
 
 router.get('/users', function(req, res) {
+  verifyLogin(req, res);
   models.Users.findAll({}).then(function(users) {
     res.json(users);
   });
@@ -68,6 +82,7 @@ router.get('/users', function(req, res) {
 
 //-- PROFILE ENDPOINTS
 router.put('/profile/:username', function(req, res) {
+  verifyLogin(req, res);
   models.Profile.find({
     where: {
       UserUsername: req.params.username
@@ -86,6 +101,7 @@ router.put('/profile/:username', function(req, res) {
 
 //-- LOAN ENDPOINTS
 router.post('/loan', function(req, res) {
+  verifyLogin(req, res);
   models.Loan.create({
     Amount: req.query.amount,
     ExpectedEndDate: req.query.expectedEndDate,
@@ -101,11 +117,12 @@ router.post('/loan', function(req, res) {
 
 //-- MESSAGE ENDPOITNS
 router.post('/message', function(req, res) {
+  verifyLogin(req, res);
   models.Message.create({
     Text: req.query.text,
     TimeSent: new Date(),
     SenderName: req.query.senderName, //TODO: Update sender using cookies n shit
-    ReceiverName: req.query.receiverName 
+    ReceiverName: req.query.receiverName
   }).then(function(loan) {
     res.json(loan);
   });

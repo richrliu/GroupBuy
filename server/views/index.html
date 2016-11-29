@@ -6,8 +6,8 @@
 {% block content %}
 
   <div class="container">
-    <h1>{{ title }}</h1>
-    <h6>{{ error }}</h6>
+    <h1>PalPay</h1>
+    <h6 style="color:red">{{ error }}</h6>
     <form method="post" id="login-form" action="/login">
 	  <div class="form-group">
 	    <label for="Username">Username:</label>
@@ -20,7 +20,7 @@
 	  <input type="submit" class="form-control" />
 	</form>
 
-	<form method="post" id="registration-form" action="/register"> 
+	<form method="post" id="registration-form" action="/register">
 	  <div class="form-group">
 	    <label for="UsernameRegistration">Username:</label>
 	    <input type="text" class="form-control" id="UsernameRegistration" name="UsernameRegistration">

@@ -4,6 +4,7 @@ var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
+var cookieSession = require('cookie-session')
 var bodyParser = require('body-parser');
 var swig = require('swig');
 
@@ -15,6 +16,7 @@ var routes = require('./routes/index.js');
 // *** express instance *** //
 var app = express();
 
+app.set('trust proxy', 1)
 
 // *** view engine *** //
 var swig = new swig.Swig();
@@ -30,7 +32,10 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(cookieParser('asjkdh88z881hhhsecret'));
+app.use(cookieSession({
+  secret: 'asdkjkjse98s8',
+}));
 app.use(express.static(path.join(__dirname, '../client')));
 
 
