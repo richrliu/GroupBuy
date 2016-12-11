@@ -4,25 +4,48 @@ var models = require('../models/index');
 var md5 = require('blueimp-md5');
 
 //Redirect to index or home, depending on loggedinuser
-function redirectLogin(req, res) {
-  if (!verifyLogin(req, res)) {
-    res.render('index');
-    return;
-  }
-}
-
-//Return false if not logged in, otherwise redirect
-function verifyLogin(req, res) {
-  if (req.session.loggedinuser) {
-    res.render('home', { user: JSON.stringify(req.session.loggedinuser) });
-    return true;
-  } else {
-    return false;
-  }
+function checkLogin(req) {
+  return req.session.loggedinuser;
 }
 
 router.get('/', function(req, res, next) {
-  redirectLogin(req, res);
+  if (checkLogin(req)) {
+    res.render('home', { user: JSON.stringify(req.session.loggedinuser) });
+  } else {
+    res.render('index');
+  }
+});
+
+router.get('/profilesetup', function (req, res, next) {
+  if (checkLogin(req)) {
+    res.render('profilesetup');
+  } else {
+    res.redirect('/');
+  }
+});
+
+router.post('/profileupdate', function(req, res, next) {
+  models.Profile.find({
+    where: {
+      UserUsername: req.session.loggedinuser.username
+    }
+  }).then(function(profile) {
+    if(profile){
+      profile.updateAttributes({
+        First: req.body.first,
+        Last: req.body.last,
+        PictureURL: req.body.picture,
+        Location: req.body.location,
+        PhoneNumber: req.body.phone,
+        Email: req.body.email,
+        Bio: req.body.bio
+      }).then(function(new_profile) {
+        res.json(new_profile);
+      });
+    } else {
+      res.send("Profile not found");
+    }
+  });
 });
 
 router.get('/newLoan', function (req, res, next) {
@@ -56,7 +79,7 @@ router.post('/login', function(req, res, next) {
       res.render('index', { error: 'User/Password not found.' });
     } else {
       req.session.loggedinuser = user.dataValues; //this is what logs users in
-      redirectLogin(req, res);
+      res.render('home', { user: JSON.stringify(req.session.loggedinuser) });
     }
   });
 });
@@ -75,7 +98,7 @@ router.post('/register', function(req, res, next) {
       if (user === null) {
         models.Users.create({Username: username, Password: hashedPW}).then(function(user) {
           req.session.loggedinuser = user.dataValues; //this is what logs users in
-          redirectLogin(req, res);
+          res.render('profilesetup');
         });
       } else {
         res.render('index', { error: 'User already exists. Did you forgot your password?' });
@@ -88,7 +111,6 @@ router.post('/register', function(req, res, next) {
 
 //-- USER ENDPOINTS
 router.post('/users', function(req, res) {
-  verifyLogin(req, res);
   var hashedPW = md5(req.query.Password);
   models.Users.create({
     Username: req.query.Username,
@@ -103,7 +125,6 @@ router.post('/users', function(req, res) {
 });
 
 router.get('/users', function(req, res) {
-  verifyLogin(req, res);
   models.Users.findAll({}).then(function(users) {
     res.json(users);
   });
@@ -111,7 +132,6 @@ router.get('/users', function(req, res) {
 
 //-- PROFILE ENDPOINTS
 router.put('/profile/:username', function(req, res) {
-  verifyLogin(req, res);
   models.Profile.find({
     where: {
       UserUsername: req.params.username
@@ -142,7 +162,6 @@ router.post('/venmodata', function(req, res) {
 
 //-- LOAN ENDPOINTS
 router.post('/loan', function(req, res) {
-  verifyLogin(req, res);
   models.Loan.create({
     Amount: req.query.amount,
     ExpectedEndDate: req.query.expectedEndDate,
@@ -158,7 +177,6 @@ router.post('/loan', function(req, res) {
 
 //-- MESSAGE ENDPOITNS
 router.post('/message', function(req, res) {
-  verifyLogin(req, res);
   models.Message.create({
     Text: req.query.text,
     TimeSent: new Date(),

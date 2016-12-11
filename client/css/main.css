@@ -99,3 +99,40 @@ body {
           background-color: #6db56d;
           border: none;
           color: #ffffff; }
+  .container .profile-setup {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: row;
+        flex-direction: row;
+    -ms-flex-pack: justify;
+        justify-content: space-between;
+    width: 75%; }
+    .container .profile-setup .divider {
+      border: 0.5px solid white; }
+    .container .profile-setup .form-group {
+      margin: 25px 0;
+      border-radius: 10px;
+      background-color: white;
+      width: 100%;
+      padding: 35px;
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-direction: column;
+          flex-direction: column; }
+      .container .profile-setup .form-group h2 {
+        font-size: 25px;
+        -ms-flex-item-align: center;
+            -ms-grid-row-align: center;
+            align-self: center;
+        margin-bottom: 25px; }
+      .container .profile-setup .form-group .form-body {
+        margin-bottom: 10px; }
+        .container .profile-setup .form-group .form-body .form-element {
+          margin-bottom: 10px; }
+          .container .profile-setup .form-group .form-body .form-element label {
+            margin-bottom: 5px; }
+        .container .profile-setup .form-group .form-body #submit-btn {
+          margin-top: 25px;
+          background-color: #6db56d;
+          border: none;
+          color: #ffffff; }
