@@ -7,6 +7,7 @@ var cookieParser = require('cookie-parser');
 var cookieSession = require('cookie-session')
 var bodyParser = require('body-parser');
 var swig = require('swig');
+var passport = require('passport');
 
 
 // *** routes *** //
@@ -36,6 +37,8 @@ app.use(cookieParser('asjkdh88z881hhhsecret'));
 app.use(cookieSession({
   secret: 'asdkjkjse98s8',
 }));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.static(path.join(__dirname, '../client')));
 
 
