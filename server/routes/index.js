@@ -128,6 +128,18 @@ router.put('/profile/:username', function(req, res) {
   });
 });
 
+router.get('/profile/:username', function(req, res) {
+    models.Profile.find({
+        where: {
+            UserUsername: req.params.username
+        }
+    }).then(function(profile) {
+        if (profile) {
+            res.render('profile', { user: profile })
+        }
+    });
+});
+
 //-- VENMODATA ENDPOINTS
 router.post('/venmodata', function(req, res) {
   models.VenmoData.create({
