@@ -14,7 +14,7 @@ function redirectLogin(req, res) {
 //Return false if not logged in, otherwise redirect
 function verifyLogin(req, res) {
   if (req.session.loggedinuser) {
-    res.render('home', { user: JSON.stringify(req.session.loggedinuser) });
+    res.render('home', { user: req.session.loggedinuser });
     return true;
   } else {
     return false;
