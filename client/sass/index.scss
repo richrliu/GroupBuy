@@ -1,5 +1,12 @@
-body {
-    background-color: #1c5be7;
+#submit-btn {
+    margin-top: 25px;
+    background-color: #6db56d;
+    border: none;
+    color: #ffffff;
+
+    &:hover {
+        background-color: darken(#6db56d, 10%);
+    }
 }
 
 .error-box {
@@ -11,60 +18,62 @@ body {
 }
 
 .container {
+    width: 100%;
+    padding: 0;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    flex-direction: row;
 
-    margin-top: 75px;
-
-    h1 {
-        font-size: 50px;
-        margin-bottom: 75px;
-        color: white;
-    }
-
-    .login-register {
+    #landing {
         display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        width: 75%;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
 
-        .divider {
-            border: 0.5px solid white;
+        background-color: #1c5be7;
+        width: 100%;
+        height: 100vh;
+
+        h1 {
+            font-size: 50px;
+            margin-bottom: 75px;
+            color: white;
         }
 
-        .form-group {
-            margin: 25px 0;
-            border-radius: 10px;
-            background-color: white;
-            width: 350px;
-            padding: 35px;
+        .login-register {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 70%;
 
-            h2 {
-                font-size: 25px;
-                align-self: center;
-                margin-bottom: 25px;
+            .divider {
+                border: 0.5px solid white;
             }
 
-            .form-body {
-                margin-bottom: 10px;
+            .form-group {
+                margin: 25px 0;
+                border-radius: 10px;
+                background-color: white;
+                width: 350px;
+                padding: 35px;
+                display: flex;
+                flex-direction: column;
 
-                .form-element {
-                    margin-bottom: 10px;
-
-                    label {
-                        margin-bottom: 5px;
-                    }
+                h2 {
+                    font-size: 25px;
+                    align-self: center;
+                    margin-bottom: 25px;
                 }
 
-                #submit-btn {
-                    margin-top: 25px;
-                    background-color: #6db56d;
-                    border: none;
-                    color: #ffffff;
+                .form-body {
+                    margin-bottom: 10px;
+
+                    .form-element {
+                        margin-bottom: 10px;
+
+                        label {
+                            margin-bottom: 5px;
+                        }
+                    }
                 }
             }
         }

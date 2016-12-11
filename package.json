@@ -29,6 +29,7 @@
   "devDependencies": {
     "autoprefixer": "6.5.3",
     "browser-sync": "2.9.6",
+    "cookie-session": "2.0.0-alpha.2",
     "gulp": "^3.9.0",
     "gulp-concat": "2.6.1",
     "gulp-jshint": "^1.11.2",
