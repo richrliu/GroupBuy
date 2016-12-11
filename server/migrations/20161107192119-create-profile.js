@@ -12,7 +12,27 @@ module.exports = {
         type: Sequelize.STRING,
         defaultValue: ""
       },
-      Description: {
+      Bio: {
+        type: Sequelize.STRING,
+        defaultValue: ""
+      },
+      First: {
+        type: Sequelize.STRING,
+        defaultValue: ""
+      },
+      Last: {
+        type: Sequelize.STRING,
+        defaultValue: ""
+      },
+      PhoneNumber: {
+        type: Sequelize.STRING,
+        defaultValue: ""
+      },
+      Email: {
+        type: Sequelize.STRING,
+        defaultValue: ""
+      },
+      Location: {
         type: Sequelize.STRING,
         defaultValue: ""
       },
