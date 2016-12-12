@@ -25,7 +25,7 @@ function checkLogin(req) {
 
 router.get('/', function(req, res, next) {
   if (checkLogin(req)) {
-    res.render('home', { user: JSON.stringify(req.session.loggedinuser) });
+    res.render('home', { user: req.session.loggedinuser });
   } else {
     res.render('index');
   }
