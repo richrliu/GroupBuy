@@ -12,10 +12,10 @@ var COINBASE_CLIENT_SECRET = '7c4a7a60e5bb33c534781dbbba8fe7b2f207d85317cfcb43eb
 var COINBASE_HOST = 'https://www.coinbase.com';
 var COINBASE_TOKEN_PATH = '/oauth/token/';
 var COINBASE_AUTHORIZE_PATH = '/oauth/authorize/';
-var COINBASE_META = { 
-    send_limit_amount : 1, 
-    send_limit_currency : 'USD', 
-    send_limit_period : 'day' 
+var COINBASE_META = {
+    send_limit_amount : 1,
+    send_limit_currency : 'USD',
+    send_limit_period : 'day'
 };
 
 //Redirect to index or home, depending on loggedinuser
@@ -233,19 +233,6 @@ function showProfile(user, req, res) {
   });
 }
 
-
-//-- VENMODATA ENDPOINTS
-router.post('/venmodata', function(req, res) {
-  models.VenmoData.create({
-    AccessToken: req.query.AccessToken,
-    PhoneNumber: req.query.PhoneNumber,
-    UserID: req.query.UserID,
-    Email: req.query.Email
-  }).then(function(vdata) {
-    res.json(vdata);
-  });
-});
-
 //-- LOAN ENDPOINTS
 router.post('/loan', function(req, res) {
   models.Loan.create({
@@ -260,6 +247,20 @@ router.post('/loan', function(req, res) {
   });
 });
 
+router.get('/viewloan/:id', function(req, res) {
+  models.Loan.findOne({
+    where: {
+      id: req.params.id
+    }
+  }).then(function(loan) {
+      if (loan) {
+        res.render('viewloan', {loan: loan});
+      } else {
+        res.send('Loan not found.');
+      }
+
+  });
+});
 
 //-- MESSAGE ENDPOITNS
 router.post('/message', function(req, res) {
