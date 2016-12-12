@@ -16,13 +16,22 @@
             <p>Amount: ฿{{loan.Amount}}</p>
             <p>End Date: {{JSON.stringify(loan.ExpectedEndDate)}}</p>
             <p>Interest Rate: {{loan.InterestRate}}</p>
+            <p>Coinbase Transaction ID: {{loan.Loan_CoinbaseTxnId}}
             <p>Last Updated: {{JSON.stringify(loan.updatedAt)}}</p>
             {% if userIsLender %}
             <a href="/acceptLoan/{{loan.id}}">Accept</a>
             <a href="/denyLoan/{{loan.id}}">Deny</a>
             {% elif userIsReceiver %}
-            <a href = "/fulfillLoan/{{loan.id}}">Pay the Loan</a>
+            <a href = "/payLoan/{{loan.id}}">Pay the Loan</a>
             {% endif %}
+            {% for fulfillment in fulfillments %}
+            <div class="fulfillment">
+                <h3>Fulfillment ID {{fulfillment.id}}</h3>
+                <p>Amount Paid: ฿{{fulfillment.Amount}}</p>
+                <p>Fulfilled On: {{fulfillment.createdAt.toString()}}</p>
+                <p>Coinbase Transaction ID: {{fulfillment.CoinbaseTxnId}}</p>
+            </div>
+            {% endfor %}
         </div>
     </div>
 
