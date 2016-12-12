@@ -285,7 +285,7 @@ display: flex;
   margin-left: 10px;
 }
 
-.tag_in_progress_late, .tag_in_progress_late {
+.tag_in_progress, .tag_in_progress_late {
   background: orange;
   color: white;
   border-radius: 10px;
