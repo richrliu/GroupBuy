@@ -1,0 +1,22 @@
+{% extends 'layout.html' %}
+
+{% block title %}{% endblock %}
+
+
+{% block content %}
+<div class="container">
+    {% include 'sidebar.html' %}
+
+    <div id="view-loan">
+        <div class="loan-group">
+            <h1>View Loan</h1>
+            <p>Lender: <a href='/profile/{{loan.Lender}}'>{{loan.Lender}}</a></p>
+            <p>Borrower: <a href='/profile/{{loan.Receiver}}'>{{loan.Receiver}}</a></p>
+            <p>Amount: ฿{{loan.Amount}}</p>
+            <p>End Date: {{JSON.stringify(loan.ExpectedEndDate)}}</p>
+            <p>Interest Rate: {{loan.InterestRate}}</p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
