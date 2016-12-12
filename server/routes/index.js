@@ -263,8 +263,9 @@ router.get('/viewloan/:id', function(req, res) {
       id: req.params.id
     }
   }).then(function(loan) {
-      var userIsLender = loan.Lender == req.session.loggedinuser.Username;
-      var userIsReceiver = loan.Receiver == req.session.loggedinuser.Username;
+      var userIsLender = loan.Lender == req.session.loggedinuser.Username && loan.CompletionStatus == 'pending_approval';
+      var userIsReceiver = loan.Receiver == 
+        req.session.loggedinuser.Username && loan.CompletionStatus != 'completed' && loan.CompletionStatus != 'completed_late';
       console.log(userIsLender);
       console.log(userIsReceiver);
       if (loan) {
