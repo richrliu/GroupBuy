@@ -28,6 +28,7 @@
     "sequelize": "^3.12.2",
     "sequelize-cli": "^2.4.0",
     "serve-favicon": "~2.3.0",
+    "simple-oauth2": "^1.0.1",
     "strip": "^3.0.0",
     "strip-ansi": "^3.0.1",
     "swig": "^1.4.2"

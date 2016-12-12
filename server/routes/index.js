@@ -3,41 +3,20 @@ var router = express.Router();
 var models = require('../models/index');
 var md5 = require('blueimp-md5');
 var coinbase = require('coinbase');
-var passport = require('passport');
-var CoinbaseStrategy = require('passport-coinbase').Strategy;
+var request = require('request');
 
 
-// COINBASE PASSPORT
+// COINBASE CONFIG
 var COINBASE_CLIENT_ID = '6325553eb82c9a8a1963abd89814e838aff157918b257ca45bce72b3c0621e7a';
 var COINBASE_CLIENT_SECRET = '7c4a7a60e5bb33c534781dbbba8fe7b2f207d85317cfcb43eb96128dbd6eeac9';
-var COINBASE_META = {
-    send_limit_amount : 1,
-    send_limit_currency : 'USD',
-    send_limit_period : 'day'
+var COINBASE_HOST = 'https://www.coinbase.com';
+var COINBASE_TOKEN_PATH = '/oauth/token/';
+var COINBASE_AUTHORIZE_PATH = '/oauth/authorize/';
+var COINBASE_META = { 
+    send_limit_amount : 1, 
+    send_limit_currency : 'USD', 
+    send_limit_period : 'day' 
 };
-passport.use(new CoinbaseStrategy({
-  clientID: COINBASE_CLIENT_ID,
-  clientSecret: COINBASE_CLIENT_SECRET,
-  callbackURL: "http://localhost:5000/auth/coinbase/callback",
-  scope: ['wallet:accounts:read', 'wallet:transactions:request', 'wallet:transactions:send', 'user']
-}, function(accessToken, refreshToken, profile, done) {
-  process.nextTick(function() {
-    return done(null, profile);
-  });
-}));
-passport._strategies.coinbase.authorizationParams = function(options) {
-    var meta = {};
-    for(o in COINBASE_META){
-        meta['meta['+o+']'] = COINBASE_META[o];
-    };
-    return meta;
-};
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-passport.deserializeUser(function(obj, done) {
-  done(null, obj);
-});
 
 //Redirect to index or home, depending on loggedinuser
 function checkLogin(req) {
@@ -54,7 +33,17 @@ router.get('/', function(req, res, next) {
 
 router.get('/profilesetup', function (req, res, next) {
   if (checkLogin(req)) {
-    res.render('profilesetup');
+    models.Profile.find({
+      where: {
+        UserUsername: req.session.loggedinuser.Username
+      }
+    }).then(function(profile) {
+      if (profile) {
+        res.render('profilesetup', {profile:profile});
+      } else {
+        res.render('profilesetup');
+      }
+    });
   } else {
     res.redirect('/');
   }
@@ -103,11 +92,15 @@ router.get('/newLoan', function (req, res, next) {
 });
 
 router.post('/newLoan', function (req, res, next) {
-  var lender = req.body.LoanLender;
+  var lender = req.session.loggedinuser.Username;
   var receiver = req.body.LoanReceiver;
   var amount = req.body.LoanAmount;
   var endDate = req.body.LoanEndDate;
   var interestRate = req.body.LoanInterestRate;
+  var finalAmount = amount*(1+interestRate);
+
+  var scope = 'wallet:accounts:read, wallet:transactions:request, wallet:transactions:send, user';
+  var redirect_uri = 'http://localhost:5000/requestTokenStep';
 
   models.Loan.create({
     Amount: amount,
@@ -117,7 +110,26 @@ router.post('/newLoan', function (req, res, next) {
     Lender: lender,
     Receiver: receiver
   }).then(function(loan) {
-    res.json(loan);
+    models.Profile.findOne({
+      where: {
+        UserUsername: receiver
+      }
+    }).then(function(borrower) {
+      var args = {
+        "to": borrower.Email,
+        "amount": finalAmount,
+        "currency": "BTC",
+        "description": "PalPay"
+      };
+      req.session.request_args = args;
+      var authorization_uri = COINBASE_HOST + COINBASE_AUTHORIZE_PATH;
+      authorization_uri += '?scope=' + scope;
+      authorization_uri += '&redirect_uri=' + redirect_uri;
+      authorization_uri += '&meta[send_limit_amount]=1' + '&meta[send_limit_currency]=USD' + '&meta[send_limit_period]=day';
+      authorization_uri += '&client_id=' + COINBASE_CLIENT_ID;
+      authorization_uri += '&response_type=code';
+      res.redirect(authorization_uri);
+    });
   });
 });
 
@@ -261,78 +273,86 @@ router.post('/message', function(req, res) {
   });
 });
 
-//-- BITCOIN TESTING
-// router.get('/bitcoin-test', function(req, res, next) {
-  // var Client = require('coinbase').Client;
-  // var client = new Client({'apiKey': 'PiYmM2Lf1U6BVXyV', 'apiSecret': 'jGk1HVFlxue1CLbIYhXLsu1kNFQcHaf4'});
-  // client.getAccounts({}, function(err, accounts) {
-  //   accounts.forEach(function(acct) {
-  //     if (acct.primary && acct.currency == 'BTC') {
-  //       var args = {
-  //         "to": "lolatme4@gmail.com",
-  //         "amount": "1",
-  //         "currency": "USD",
-  //         "description": "Sample transaction for you"
-  //       };
-  //       acct.requestMoney(args, function(err, txn) {
-  //         res.render('my txn id is: ' + txn.id);
-  //       });
-  //     }
-  //   });
-  // });
-// });
-
-router.get('/auth/coinbase',
-           passport.authenticate('coinbase'),
-           function(req, res) {
-            // The request will be redirected to Coinbase for authentication, so this
-            // function will not be called.
-           });
-
-router.get('/auth/coinbase/callback',
-           passport.authenticate('coinbase', { failureRedirect: '/register' }),
-           function(req, res) {
-            res.redirect('/');
-           });
-
 //-- COINBASE ENDPOINTS
-router.post('/auth/coinbase/request/', function(req, res, next) {
-  var borrowerEmail = req.body.borrowerEmail;
-  var amount = req.body.amount;
-  var interest = req.body.interest;
-  var finalAmount= amount*(1+interest);
-  var args = {
-    "to": borrowerEmail,
-    "amount": finalAmount,
-    "currency": "BTC",
-    "description": "/auth/coinbase/request"
-  };
-  passport.use(new CoinbaseStrategy({
-    clientID: COINBASE_CLIENT_ID,
-    clientSecret: COINBASE_CLIENT_SECRET,
-    callbackURL: "http://localhost:5000/requestComplete",
-    scope: ['wallet:transactions:request', 'user']
-  }, function(accessToken, refreshToken, profile, done) {
-    var Client = require('coinbase').Client;
-    var client = new Client({'accessToken': accessToken, 'refreshToken': refreshToken});
-    client.getAccounts({}, function(err, accounts) {
-      accounts.forEach(function(acct) {
-        if (acct.primary && acct.currency == 'BTC') {
-          acct.requestMoney(args, function(err, txn) {
-            console.log('my txn id is: ' + txn.id);
-          });
-        }
+router.get('/requestTokenStep', function(req, res, next) {
+  var code = req.query.code;
+  if (code) {
+    var args = {
+      code: code,
+      grant_type: 'authorization_code',
+      client_id: COINBASE_CLIENT_ID,
+      client_secret: COINBASE_CLIENT_SECRET,
+      redirect_uri: 'http://localhost:5000/requestTokenStep'
+    }
+    request({
+      url: COINBASE_HOST + COINBASE_TOKEN_PATH,
+      qs: args,
+      method: 'POST'
+    }, function(err, resp, body) {
+      var accessToken = JSON.parse(body).access_token;
+      var refreshToken = JSON.parse(body).refresh_token;
+      var Client = coinbase.Client;
+      var client = new Client({'accessToken': accessToken, 'refreshToken': refreshToken});
+      client.getAccounts({}, function(err, accounts) {
+        accounts.forEach(function(acct) {
+          if (acct.primary && acct.currency == 'BTC') {
+            acct.requestMoney(req.session.request_args, function(err, txn) {
+              console.log('my txn id is: ' + txn.id);
+            });
+          }
+        });
       });
+      res.send('Trolol'); // TODO FIX
     });
-    process.nextTick(function() {
-      return done(null, profile);
+  }
+});
+
+router.get('/rankingTokenStep', function(req, res, next) {
+  var code = req.query.code;
+  if (code) {
+    var args = {
+      code: code,
+      grant_type: 'authorization_code',
+      client_id: COINBASE_CLIENT_ID,
+      client_secret: COINBASE_CLIENT_SECRET,
+      redirect_uri: 'http://localhost:5000/rankingTokenStep'
+    }
+    request({
+      url: COINBASE_HOST + COINBASE_TOKEN_PATH,
+      qs: args,
+      method: 'POST'
+    }, function(err, resp, body) {
+      var accessToken = JSON.parse(body).access_token;
+      var refreshToken = JSON.parse(body).refresh_token;
+      var Client = coinbase.Client;
+      var client = new Client({'accessToken': accessToken, 'refreshToken': refreshToken});
+      client.getAccounts({}, function(err, accounts) {
+        accounts.forEach(function(acct) {
+          if (acct.primary && acct.currency == 'BTC') {
+            acct.getTransactions({}, function(err, txns) {
+              console.log(txns);
+            });
+          }
+        });
+      });
+      res.send('Trolol'); // TODO FIX
     });
-  }));
-  res.redirect('/auth/coinbase');
+  }
+});
+
+router.get('/calculateRanking', function(req, res, next) {
+  var redirect_uri = 'http://localhost:5000/rankingTokenStep';
+  var scope = 'wallet:accounts:read';
+  var authorization_uri = COINBASE_HOST + COINBASE_AUTHORIZE_PATH;
+  authorization_uri += '?scope=' + scope;
+  authorization_uri += '&redirect_uri=' + redirect_uri;
+  authorization_uri += '&client_id=' + COINBASE_CLIENT_ID;
+  authorization_uri += '&response_type=code';
+  res.redirect(authorization_uri);
 });
 
 router.get('/requestComplete', function(req, res, next) {
-  res.redirect('/');
+  res.json(req);
 });
 
 router.get('/newRequest', function(req, res, next) {
