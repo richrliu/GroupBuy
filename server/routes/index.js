@@ -180,6 +180,21 @@ router.get('/users', function(req, res) {
   });
 });
 
+// Search for users, etc.
+router.get('/search/:term', function(req, res) {
+  models.Users.findAll({
+    include: [{
+        model: models.Profile,
+        where: {$or: [
+          { First: { ilike: '%'+req.params.term+'%' } },
+          { Last: { ilike: '%'+req.params.term+'%' } }
+        ]}
+    }]
+  }).then(function(users) {
+    res.json(users);
+  });
+});
+
 //-- PROFILE ENDPOINTS
 router.get('/profile', function(req, res) {
   var user = req.session.loggedinuser.Username;
