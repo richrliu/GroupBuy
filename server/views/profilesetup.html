@@ -28,9 +28,9 @@
                 </div>
                 <div class="form-element">
                     <label for="picture">Profile Picture</label>
-                    {% if profile.PictureURL == 0 %}
+                    {% if profile.PictureURL.length == 0 %}
                     <input type="text" class="form-control" id="picture" name="picture" placeholder="https://imgur.com/gallery/tmokP">
-                    {% elif profile.PictureURL > 0 %}
+                    {% elif profile.PictureURL.length > 0 %}
                     <input type="text" class="form-control" id="picture" name="picture" value={{profile.PictureURL}}>
                     {% endif %}
                 </div>
