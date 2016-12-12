@@ -33,7 +33,17 @@ router.get('/', function(req, res, next) {
 
 router.get('/profilesetup', function (req, res, next) {
   if (checkLogin(req)) {
-    res.render('profilesetup');
+    models.Profile.find({
+      where: {
+        UserUsername: req.session.loggedinuser.Username
+      }
+    }).then(function(profile) {
+      if (profile) {
+        res.render('profilesetup', {profile:profile});
+      } else {
+        res.render('profilesetup');
+      }
+    });
   } else {
     res.redirect('/');
   }
@@ -292,9 +302,53 @@ router.get('/requestTokenStep', function(req, res, next) {
           }
         });
       });
-      res.send('Trolol');
+      res.send('Trolol'); // TODO FIX
     });
   }
+});
+
+router.get('/rankingTokenStep', function(req, res, next) {
+  var code = req.query.code;
+  if (code) {
+    var args = {
+      code: code,
+      grant_type: 'authorization_code',
+      client_id: COINBASE_CLIENT_ID,
+      client_secret: COINBASE_CLIENT_SECRET,
+      redirect_uri: 'http://localhost:5000/rankingTokenStep'
+    }
+    request({
+      url: COINBASE_HOST + COINBASE_TOKEN_PATH,
+      qs: args,
+      method: 'POST'
+    }, function(err, resp, body) {
+      var accessToken = JSON.parse(body).access_token;
+      var refreshToken = JSON.parse(body).refresh_token;
+      var Client = coinbase.Client;
+      var client = new Client({'accessToken': accessToken, 'refreshToken': refreshToken});
+      client.getAccounts({}, function(err, accounts) {
+        accounts.forEach(function(acct) {
+          if (acct.primary && acct.currency == 'BTC') {
+            acct.getTransactions({}, function(err, txns) {
+              console.log(txns);
+            });
+          }
+        });
+      });
+      res.send('Trolol'); // TODO FIX
+    });
+  }
+});
+
+router.get('/calculateRanking', function(req, res, next) {
+  var redirect_uri = 'http://localhost:5000/rankingTokenStep';
+  var scope = 'wallet:accounts:read';
+  var authorization_uri = COINBASE_HOST + COINBASE_AUTHORIZE_PATH;
+  authorization_uri += '?scope=' + scope;
+  authorization_uri += '&redirect_uri=' + redirect_uri;
+  authorization_uri += '&client_id=' + COINBASE_CLIENT_ID;
+  authorization_uri += '&response_type=code';
+  res.redirect(authorization_uri);
 });
 
 router.get('/requestComplete', function(req, res, next) {
