@@ -63,10 +63,10 @@ router.get('/profilesetup', function (req, res, next) {
 router.post('/profileupdate', function(req, res, next) {
   models.Profile.find({
     where: {
-      UserUsername: req.session.loggedinuser.username
+      UserUsername: req.session.loggedinuser.Username
     }
   }).then(function(profile) {
-    if(profile){
+    if (profile) {
       profile.updateAttributes({
         First: req.body.first,
         Last: req.body.last,
@@ -74,12 +74,24 @@ router.post('/profileupdate', function(req, res, next) {
         Location: req.body.location,
         PhoneNumber: req.body.phone,
         Email: req.body.email,
-        Bio: req.body.bio
+        Bio: req.body.bio,
+        UserUsername: req.session.loggedinuser.Username
       }).then(function(new_profile) {
         res.json(new_profile);
       });
     } else {
-      res.send("Profile not found");
+      models.Profile.create({
+        First: req.body.first,
+        Last: req.body.last,
+        PictureURL: req.body.picture,
+        Location: req.body.location,
+        PhoneNumber: req.body.phone,
+        Email: req.body.email,
+        Bio: req.body.bio,
+        UserUsername: req.session.loggedinuser.Username
+      }).then(function(new_profile) {
+        res.json(new_profile);
+      });
     }
   });
 });
@@ -256,5 +268,50 @@ router.get('/auth/coinbase/callback',
            function(req, res) {
             res.redirect('/');
            });
+
+//-- COINBASE ENDPOINTS
+router.post('/auth/coinbase/request/', function(req, res, next) {
+  var borrowerEmail = req.body.borrowerEmail;
+  var amount = req.body.amount;
+  var interest = req.body.interest;
+  var finalAmount= amount*(1+interest);
+  var args = {
+    "to": borrowerEmail,
+    "amount": finalAmount,
+    "currency": "BTC",
+    "description": "/auth/coinbase/request"
+  };
+  passport.use(new CoinbaseStrategy({
+    clientID: COINBASE_CLIENT_ID,
+    clientSecret: COINBASE_CLIENT_SECRET,
+    callbackURL: "http://localhost:5000/requestComplete",
+    scope: ['wallet:transactions:request', 'user']
+  }, function(accessToken, refreshToken, profile, done) {
+    var Client = require('coinbase').Client;
+    var client = new Client({'accessToken': accessToken, 'refreshToken': refreshToken});
+    client.getAccounts({}, function(err, accounts) {
+      accounts.forEach(function(acct) {
+        if (acct.primary && acct.currency == 'BTC') {
+          acct.requestMoney(args, function(err, txn) {
+            console.log('my txn id is: ' + txn.id);
+          });
+        }
+      });
+    });
+    process.nextTick(function() {
+      return done(null, profile);
+    });
+  }));
+  res.redirect('/auth/coinbase');
+});
+
+router.get('/requestComplete', function(req, res, next) {
+  res.redirect('/');
+});
+
+router.get('/newRequest', function(req, res, next) {
+  res.render('newRequest');
+});
+
 
 module.exports = router;
