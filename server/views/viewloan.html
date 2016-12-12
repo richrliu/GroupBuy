@@ -22,7 +22,7 @@
             <a href="/acceptLoan/{{loan.id}}">Accept</a>
             <a href="/denyLoan/{{loan.id}}">Deny</a>
             {% elif userIsReceiver %}
-            <a href = "/fulfillLoan/{{loan.id}}">Pay the Loan</a>
+            <a href = "/payLoan/{{loan.id}}">Pay the Loan</a>
             {% endif %}
             {% for fulfillment in fulfillments %}
             <div class="fulfillment">
