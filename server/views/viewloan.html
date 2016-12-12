@@ -15,8 +15,16 @@
             <p>Amount: ฿{{loan.Amount}}</p>
             <p>End Date: {{JSON.stringify(loan.ExpectedEndDate)}}</p>
             <p>Interest Rate: {{loan.InterestRate}}</p>
+            {% if userIsLender %}
+            <a href="/acceptLoan/{{loan.id}}">Accept</a>
+            <a href="/denyLoan/{{loan.id}}">Deny</a>
+            {% elif userIsReceiver %}
+            <a href = "/fulfillLoan/{{loan.id}}">Pay the Loan</a>
+            {% endif %}
         </div>
     </div>
+    
+
 </div>
 
 {% endblock %}

@@ -263,13 +263,60 @@ router.get('/viewloan/:id', function(req, res) {
       id: req.params.id
     }
   }).then(function(loan) {
+      var userIsLender = loan.Lender == req.session.loggedinuser.Username;
+      var userIsReceiver = loan.Receiver == req.session.loggedinuser.Username;
+      console.log(userIsLender);
+      console.log(userIsReceiver);
       if (loan) {
-        res.render('viewloan', {loan: loan});
+        res.render('viewloan', {loan: loan, userIsLender:userIsLender, userIsReceiver:userIsReceiver});
       } else {
         res.send('Loan not found.');
       }
 
   });
+});
+
+router.get('/acceptLoan/:loanid', function(req, res, next) {
+  models.Loan.find({
+    where: {
+      id: req.params.loanid
+    }
+  }).then(function(loan) {
+    if (loan) {
+      var currDate = new Date();
+      var newStatus = currDate < loan.ExpectedEndDate ? 'in_progress' : 'in_progress_late';
+      loan.updateAttributes({
+        CompletionStatus: newStatus
+      }).then(function(new_loan){
+        res.redirect('/viewloan/'+req.params.loanid);
+      });
+    } else {
+      res.send('Loan not found :/');
+    }
+  });
+});
+
+router.get('/denyLoan/:loanid', function(req, res, next) {
+  models.Loan.find({
+    where: {
+      id: req.params.loanid
+    }
+  }).then(function(loan) {
+    if (loan) {
+      loan.updateAttributes({
+        CompletionStatus: 'denied'
+      }).then(function(new_loan){
+        res.redirect('/viewloan/'+req.params.loanid);
+      });
+    } else {
+      res.send('Loan not found :/');
+    }
+  });
+});
+
+router.get('payLoan/:loanid', function(req, res, next) {
+  // TODO MUST IMPLEMENT
+  res.redirect('/viewloan/+req.params.loanid');
 });
 
 //-- MESSAGE ENDPOITNS
