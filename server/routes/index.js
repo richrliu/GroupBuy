@@ -10,10 +10,10 @@ var CoinbaseStrategy = require('passport-coinbase').Strategy;
 // COINBASE PASSPORT
 var COINBASE_CLIENT_ID = '6325553eb82c9a8a1963abd89814e838aff157918b257ca45bce72b3c0621e7a';
 var COINBASE_CLIENT_SECRET = '7c4a7a60e5bb33c534781dbbba8fe7b2f207d85317cfcb43eb96128dbd6eeac9';
-var COINBASE_META = { 
-    send_limit_amount : 1, 
-    send_limit_currency : 'USD', 
-    send_limit_period : 'day' 
+var COINBASE_META = {
+    send_limit_amount : 1,
+    send_limit_currency : 'USD',
+    send_limit_period : 'day'
 };
 passport.use(new CoinbaseStrategy({
   clientID: COINBASE_CLIENT_ID,
@@ -25,10 +25,10 @@ passport.use(new CoinbaseStrategy({
     return done(null, profile);
   });
 }));
-passport._strategies.coinbase.authorizationParams = function(options) {     
+passport._strategies.coinbase.authorizationParams = function(options) {
     var meta = {};
     for(o in COINBASE_META){
-        meta['meta['+o+']'] = COINBASE_META[o]; 
+        meta['meta['+o+']'] = COINBASE_META[o];
     };
     return meta;
 };
@@ -77,7 +77,8 @@ router.post('/profileupdate', function(req, res, next) {
         Bio: req.body.bio,
         UserUsername: req.session.loggedinuser.Username
       }).then(function(new_profile) {
-        res.json(new_profile);
+        console.log(new_profile);
+        res.redirect('/');
       });
     } else {
       models.Profile.create({
@@ -90,7 +91,8 @@ router.post('/profileupdate', function(req, res, next) {
         Bio: req.body.bio,
         UserUsername: req.session.loggedinuser.Username
       }).then(function(new_profile) {
-        res.json(new_profile);
+        console.log(new_profile);
+        res.redirect('/');
       });
     }
   });
@@ -179,22 +181,30 @@ router.get('/users', function(req, res) {
 });
 
 //-- PROFILE ENDPOINTS
-router.put('/profile/:username', function(req, res) {
+router.get('/profile', function(req, res) {
+  var user = req.session.loggedinuser.Username;
+  showProfile(user, req, res);
+});
+
+router.get('/profile/:username', function(req, res) {
+  var user = req.params.username;
+  showProfile(user, req, res);
+});
+
+function showProfile(user, req, res) {
   models.Profile.find({
     where: {
-      UserUsername: req.params.username
+      UserUsername: user
     }
   }).then(function(profile) {
     if(profile){
-      profile.updateAttributes({
-        PictureURL: req.query.PictureURL,
-        Description: req.query.Description
-      }).then(function(new_profile) {
-        res.send(new_profile);
-      });
+      res.json(profile);
+    } else {
+      res.send("Profile not found.");
     }
   });
-});
+}
+
 
 //-- VENMODATA ENDPOINTS
 router.post('/venmodata', function(req, res) {
