@@ -56,7 +56,8 @@ router.post('/profileupdate', function(req, res, next) {
         Bio: req.body.bio,
         UserUsername: req.session.loggedinuser.Username
       }).then(function(new_profile) {
-        res.json(new_profile);
+        console.log(new_profile);
+        res.redirect('/');
       });
     } else {
       models.Profile.create({
@@ -69,7 +70,8 @@ router.post('/profileupdate', function(req, res, next) {
         Bio: req.body.bio,
         UserUsername: req.session.loggedinuser.Username
       }).then(function(new_profile) {
-        res.json(new_profile);
+        console.log(new_profile);
+        res.redirect('/');
       });
     }
   });
@@ -180,23 +182,46 @@ router.get('/users', function(req, res) {
   });
 });
 
+// Search for users, etc.
+router.get('/search/:term', function(req, res) {
+  models.Users.findAll({
+    include: [{
+        model: models.Profile,
+        where: {$or: [
+          { First: { ilike: '%'+req.params.term+'%' } },
+          { Last: { ilike: '%'+req.params.term+'%' } }
+        ]}
+    }]
+  }).then(function(users) {
+    res.json(users);
+  });
+});
+
 //-- PROFILE ENDPOINTS
-router.put('/profile/:username', function(req, res) {
+router.get('/profile', function(req, res) {
+  var user = req.session.loggedinuser.Username;
+  showProfile(user, req, res);
+});
+
+router.get('/profile/:username', function(req, res) {
+  var user = req.params.username;
+  showProfile(user, req, res);
+});
+
+function showProfile(user, req, res) {
   models.Profile.find({
     where: {
-      UserUsername: req.params.username
+      UserUsername: user
     }
   }).then(function(profile) {
     if(profile){
-      profile.updateAttributes({
-        PictureURL: req.query.PictureURL,
-        Description: req.query.Description
-      }).then(function(new_profile) {
-        res.send(new_profile);
-      });
+      res.json(profile);
+    } else {
+      res.send("Profile not found.");
     }
   });
-});
+}
+
 
 //-- VENMODATA ENDPOINTS
 router.post('/venmodata', function(req, res) {
