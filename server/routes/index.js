@@ -432,7 +432,8 @@ router.get('/requestTokenStep', function(req, res, next) {
         accounts.forEach(function(acct) {
           if (acct.primary && acct.currency == 'BTC') {
             acct.requestMoney(req.session.request_args, function(err, txn) {
-              console.log('my txn id is: ' + txn.id);
+              if (err) console.log(err);
+              if (txn) console.log("transaction: " + txn.id);
             });
           }
         });
@@ -521,13 +522,14 @@ router.post('/newRequest', function(req, res, next) {
       where: {
         UserUsername: lender
       }
-    }).then(function(borrower) {
+    }).then(function(lender) {
       var args = {
-        "to": borrower.Email,
+        "to": lender.Email,
         "amount": finalAmount,
         "currency": "BTC",
         "description": "PalPay"
       };
+      console.log(args);
       req.session.request_args = args;
       var authorization_uri = COINBASE_HOST + COINBASE_AUTHORIZE_PATH;
       authorization_uri += '?scope=' + scope;
