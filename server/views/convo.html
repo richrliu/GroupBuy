@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+
+{% block title %}{% endblock %}
+
+
+{% block content %}
+
+<div class="container">
+    {% include 'sidebar.html' %}
+
+    <div id="convo">
+        <div class="convo-group">
+            <h1>Conversation with {{ user }}</h1>
+            <ul>
+            {% for message in conversation %}
+                 {{ message.dataValues.SenderName }}: {{ message.dataValues.TimeSent.toString() }} {{ message.dataValues.Text }} <br>
+            {% endfor %}
+            </ul>
+            <form action="/message" method="post">
+                <input type="hidden" name="receiver" value={{ user }}>
+                <input type="text" name="message"><br>
+                <input type="submit" value="Send">
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
