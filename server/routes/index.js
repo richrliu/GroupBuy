@@ -273,7 +273,18 @@ router.post('/newMessage', function(req, res) {
   var receiver = req.body.MessageReceiver;
   var message = req.body.Message;
 
-  models.Conversation.findOne(
+  if (receiver == '' || sender == '') {
+    res.render("newMessage", { error: 'Please fill in message receiver.'})
+  } else {
+      models.Users.findOne({
+    where: {
+      Username: receiver
+    }
+  }).then(function(user) {
+    if (user === null || receiver == sender) {
+      res.render("newMessage", { error: 'Please check that you put the correct username.'})
+    } else {
+      models.Conversation.findOne(
     {where: 
       {
       $or: [
@@ -295,13 +306,47 @@ router.post('/newMessage', function(req, res) {
             ReceiverName: receiver,
             ConversationId: newConversation.id
           }).then(function(newMessage) {
-            res.json(newMessage);
+            res.redirect('http://localhost:5000/conversations/'+receiver);
         });
         });
       } else {
-        res.render('newMessage', { error: 'You\'re already in a conversation with this person.' });
+        //res.render('newMessage', { error: 'You\'re already in a conversation with this person.' });
+
+        models.Message.create({
+          Text: message,
+          TimeSent: new Date(),
+          SenderName: sender, //TODO: Update sender using cookies n shit
+          ReceiverName: receiver,
+          ConversationId: conversation.id
+        }).then(function(newMessage) {
+          res.redirect('http://localhost:5000/conversations/'+receiver);
+        });      
       }
-    })
+    });
+    } 
+  });
+}
+});
+
+router.get('/newMessage/:username', function(req, res) {
+  var receiver = req.params.username;
+  var sender = req.session.loggedinuser.Username;
+  if (receiver == '' || sender == '')
+    res.render("newMessage", { error: 'Please fill in reciever.'})
+  models.Conversation.findOne(
+    {where: 
+      {
+      $or: [
+        {$and: {User1: sender, User2: receiver}},
+        {$and: {User1: receiver, User2: sender}}
+      ]}}
+    ).then(function(conversation) {
+      if (conversation === null) {
+        res.render('newMessage', {receiver: receiver});
+      } else {
+        res.redirect('http://localhost:5000/conversations/'+receiver);
+      }
+    });
 });
 
 router.post('/message', function (req, res) {
