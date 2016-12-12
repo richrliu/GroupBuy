@@ -7,14 +7,16 @@
 <div class="container">
     {% include 'sidebar.html' %}
 
-    <div id="view-loan">
-        <div class="loan-group">
-            <h1>View Loan</h1>
+    <div id="standard">
+        <div class="group">
+            <h1>{{loan.Receiver}}'s loan<span class='tag_{{loan.CompletionStatus}}'>{{loan.CompletionStatus}}</span></h1>
+            <progress value="{{loan.Amount - loan.AmountRemaining}}" max="{{loan.Amount}}"></progress>
             <p>Lender: <a href='/profile/{{loan.Lender}}'>{{loan.Lender}}</a></p>
             <p>Borrower: <a href='/profile/{{loan.Receiver}}'>{{loan.Receiver}}</a></p>
             <p>Amount: ฿{{loan.Amount}}</p>
             <p>End Date: {{JSON.stringify(loan.ExpectedEndDate)}}</p>
             <p>Interest Rate: {{loan.InterestRate}}</p>
+            <p>Last Updated: {{JSON.stringify(loan.updatedAt)}}</p>
             {% if userIsLender %}
             <a href="/acceptLoan/{{loan.id}}">Accept</a>
             <a href="/denyLoan/{{loan.id}}">Deny</a>
