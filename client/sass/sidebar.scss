@@ -1,10 +1,41 @@
+
 #sidebar {
-    width: 25%;
+    width: 20%;
     height: 100vh;
     color: white;
     background-color: #1c5be7;
 
+    a {
+        color: white;
+
+        &:hover {
+            text-decoration: none;
+        }
+    }
+
     h1 {
-        text-align: center;
+        padding: 10px;
+    }
+
+    .options {
+        margin-top: 75px;
+
+        .option-el {
+            padding: 10px;
+            border-bottom: 2px solid white;
+            border-left: none;
+            border-right: none;
+
+            &:first-child {
+                border-top: 2px solid white;
+                border-left: none;
+                border-right: none;
+            }
+
+            &:hover {
+                background-color: lighten(#1c5be7, 10%);
+                cursor: pointer;
+            }
+        }
     }
 }
