@@ -2,7 +2,8 @@
 module.exports = function(sequelize, DataTypes) {
   var Fulfillment = sequelize.define('Fulfillment', {
     CoinbaseTxnId: DataTypes.STRING,
-    Amount: DataTypes.FLOAT
+    Amount: DataTypes.FLOAT,
+    LoanID: DataTypes.INTEGER
   }, {
     classMethods: {
       associate: function(models) {

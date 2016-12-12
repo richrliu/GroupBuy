@@ -332,7 +332,7 @@ router.get('/payLoan/:loanid', function(req, res, next) {
   }).then(function(loan) {
     if (loan) {
       var lender = loan.Lender;
-      var borrower = loan.Borrower;
+      var borrower = loan.Receiver;
       var amountRemaining = loan.AmountRemaining;
       res.render('payLoan', {lender:lender, borrower:borrower, amountRemaining:amountRemaining, id:req.params.loanid});
     } else {
@@ -549,6 +549,54 @@ router.get('/requestTokenStep', function(req, res, next) {
   }
 });
 
+router.get('/fulfillTokenStep', function(req, res, next) {
+  var code = req.query.code;
+  if (code) {
+    var args = {
+      code: code,
+      grant_type: 'authorization_code',
+      client_id: COINBASE_CLIENT_ID,
+      client_secret: COINBASE_CLIENT_SECRET,
+      redirect_uri: 'http://localhost:5000/fulfillTokenStep'
+    }
+    request({
+      url: COINBASE_HOST + COINBASE_TOKEN_PATH,
+      qs: args,
+      method: 'POST'
+    }, function(err, resp, body) {
+      var accessToken = JSON.parse(body).access_token;
+      var refreshToken = JSON.parse(body).refresh_token;
+      var Client = coinbase.Client;
+      var client = new Client({'accessToken': accessToken, 'refreshToken': refreshToken});
+      client.getAccounts({}, function(err, accounts) {
+        accounts.forEach(function(acct) {
+          if (acct.primary && acct.currency == 'BTC') {
+            acct.sendMoney(req.session.request_args, function(err, txn) {
+              if (err) console.log(err);
+              if (txn) {
+                console.log("transaction: " + txn.id);
+                if (req.session.prevFulfillmentID) {
+                  models.Fulfillment.find({
+                    where: {
+                      id: req.session.prevFulFillmentID
+                    }
+                  }).then(function(fulfillment) {
+                    fulfillment.updateAttributes({
+                      CoinbaseTxnId: txn.id
+                    });
+                    req.session.prevFulFillmentID = null;
+                  })
+                }
+              }
+            });
+          }
+        });
+      });
+      res.redirect('No code recieved from coinbase sorry lol'); // TODO FIX
+    });
+  }
+});
+
 router.get('/rankingTokenStep', function(req, res, next) {
   var code = req.query.code;
   if (code) {
@@ -617,7 +665,7 @@ router.post('/newRequest', function(req, res, next) {
     FinalAmount: finalAmount,
     ExpectedEndDate: endDate,
     InterestRate: interestRate,
-    AmountRemaining: amount,
+    AmountRemaining: finalAmount,
     Lender: lender,
     Receiver: receiver
   }).then(function(loan) {
@@ -649,42 +697,51 @@ router.post('/newFulfillment', function(req, res, next) {
   var lender = req.body.lenderUsername;
   var receiver = req.session.loggedinuser.Username;
   var amount = req.body.amount;
-  var endDate = req.body.LoanEndDate;
-  var interestRate = req.body.interest;
-  var finalAmount = amount*(1+interestRate);
+  var loanid = req.body.loanID;
 
-  var scope = 'wallet:accounts:read, wallet:transactions:request, wallet:transactions:send, user';
-  var redirect_uri = 'http://localhost:5000/requestTokenStep';
+  var scope = 'wallet:accounts:read, wallet:transactions:send, user';
+  var redirect_uri = 'http://localhost:5000/fulfillTokenStep';
 
-  models.Loan.create({
+  models.Fulfillment.create({
     Amount: amount,
-    FinalAmount: finalAmount,
-    ExpectedEndDate: endDate,
-    InterestRate: interestRate,
-    AmountRemaining: amount,
     Lender: lender,
-    Receiver: receiver
-  }).then(function(loan) {
-    models.Profile.findOne({
+    Borrower: receiver,
+    LoanID: loanid
+  }).then(function(fulfillment) {
+    models.Loan.findOne({
       where: {
-        UserUsername: lender
+        id: loanid
       }
-    }).then(function(lender) {
-      req.session.prevLoanId = loan.id;
-      var args = {
-        "to": lender.Email,
-        "amount": finalAmount,
-        "currency": "BTC",
-        "description": "PalPay"
-      };
-      req.session.request_args = args;
-      var authorization_uri = COINBASE_HOST + COINBASE_AUTHORIZE_PATH;
-      authorization_uri += '?scope=' + scope;
-      authorization_uri += '&redirect_uri=' + redirect_uri;
-      authorization_uri += '&meta[send_limit_amount]=1' + '&meta[send_limit_currency]=USD' + '&meta[send_limit_period]=day';
-      authorization_uri += '&client_id=' + COINBASE_CLIENT_ID;
-      authorization_uri += '&response_type=code';
-      res.redirect(authorization_uri);
+    }).then(function(loan) {
+      var newRemaining = loan.AmountRemaining - amount;
+      var isLate = new Date() < loan.endDate;
+      var newCompletionStatus = newRemaining <= 0 ? (isLate ? 'completed_late' : 'completed') : (isLate ? 'in_progress_late' : 'in_progress');
+      loan.updateAttributes({
+        AmountRemaining: newRemaining,
+        CompletionStatus: newCompletionStatus
+      }).then(function(new_loan){
+        models.Profile.findOne({
+          where: {
+            UserUsername: new_loan.Lender
+          }
+        }).then(function(lenderProfile){
+          req.session.prevFulfillmentID = fulfillment.id;
+          var args = {
+            "to": lenderProfile.Email,
+            "amount": amount,
+            "currency": "BTC",
+            "description": "PalPay"
+          };
+          req.session.request_args = args;
+          var authorization_uri = COINBASE_HOST + COINBASE_AUTHORIZE_PATH;
+          authorization_uri += '?scope=' + scope;
+          authorization_uri += '&redirect_uri=' + redirect_uri;
+          authorization_uri += '&meta[send_limit_amount]=1' + '&meta[send_limit_currency]=USD' + '&meta[send_limit_period]=day';
+          authorization_uri += '&client_id=' + COINBASE_CLIENT_ID;
+          authorization_uri += '&response_type=code';
+          res.redirect(authorization_uri);
+        });
+      });
     });
   });
 });

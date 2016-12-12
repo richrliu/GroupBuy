@@ -20,6 +20,9 @@ module.exports = {
       Amount: {
         type: Sequelize.FLOAT
       },
+      LoanID: {
+        type: Sequelize.INTEGER
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
