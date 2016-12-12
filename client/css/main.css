@@ -174,6 +174,35 @@ table {
         color: #000000;
         margin-bottom: 5px; }
 
+#standard {
+  width: 100%;
+  height: 100vh;
+  background-color: #eeeeee;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+      flex-direction: column;
+  -ms-flex-pack: center;
+      justify-content: center;
+  -ms-flex-align: center;
+      align-items: center; }
+  #standard .group {
+    width: 75%;
+    border: 1px solid black;
+    border-radius: 25px;
+    background-color: #ffffff;
+    padding: 50px 75px; }
+    #standard .group h1 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #000000; }
+    #standard .group .form-element {
+      margin-bottom: 15px; }
+      #standard .group .form-element p {
+        color: #000000;
+        margin-bottom: 5px; }
+
+
 #sidebar {
   width: 20%;
   height: 100vh;

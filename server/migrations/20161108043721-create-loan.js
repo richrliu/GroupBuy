@@ -10,9 +10,12 @@ module.exports = {
       },
       CompletionStatus: {
         type: Sequelize.STRING,
-        defaultValue: false
+        defaultValue: "pending_approval"
       },
       Amount: {
+        type: Sequelize.FLOAT
+      },
+      FinalAmount: {
         type: Sequelize.FLOAT
       },
       ExpectedEndDate: {
@@ -28,6 +31,12 @@ module.exports = {
         type: Sequelize.STRING
       },
       Receiver: {
+        type: Sequelize.STRING
+      },
+      Loan_CoinbaseTxnId: {
+        type: Sequelize.STRING
+      },
+      Fulfillment_CoinbaseTxnId: {
         type: Sequelize.STRING
       },
       createdAt: {

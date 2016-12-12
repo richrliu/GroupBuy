@@ -1,9 +1,24 @@
+{% extends 'layout.html' %}
+
+{% block title %}{% endblock %}
+
+
+{% block content %}
+
 <div class="container">
-  <h1>{{(profile.First)}} {{(profile.Last)}} - {{(profile.UserUsername)}}</h1>
-  <img style='width: 200px; height: 200px' src='{{profile.PictureURL}}'/>
-  <p>Location: {{profile.Location}}</p>
-  <p>Email: {{profile.Email}}</p>
-  <p>Phone: {{profile.PhoneNumber}}</p>
-  <p><i>{{profile.Bio}}</i></p>
-  <p><a href="/newRequest/{{profile.UserUsername}}">Request a Loan</a></p>
+    {% include 'sidebar.html' %}
+
+    <div id="standard">
+      <div class="group">
+        <h1>{{(profile.First)}} {{(profile.Last)}} - {{(profile.UserUsername)}}</h1>
+        <img style='width: 200px; height: 200px' src='{{profile.PictureURL}}'/>
+        <p>Location: {{profile.Location}}</p>
+        <p>Email: {{profile.Email}}</p>
+        <p>Phone: {{profile.PhoneNumber}}</p>
+        <p><i>{{profile.Bio}}</i></p>
+        <p><a href="/newRequest/{{profile.UserUsername}}">Request a Loan</a></p>
+      </div>
+    </div>
 </div>
+
+{% endblock %}

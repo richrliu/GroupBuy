@@ -1,8 +1,23 @@
+{% extends 'layout.html' %}
+
+{% block title %}{% endblock %}
+
+
+{% block content %}
+
 <div class="container">
-  <h1>Search Results</h1>
-  <ul class="people_list">
-    {% for user in users %}
-      <li>{{user.Profile.First}} {{user.Profile.Last}} - (<a href="/profile/{{user.Username}}">{{user.Username}}</a>)</li>
-    {% endfor %}
-  </ul>
+  {% include 'sidebar.html' %}
+  <div id="standard">
+    <div class="group">
+
+      <h1>Search Results</h1>
+      <ul class="people_list">
+        {% for user in users %}
+          <li>{{user.Profile.First}} {{user.Profile.Last}} - (<a href="/profile/{{user.Username}}">{{user.Username}}</a>)</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
 </div>
+
+{% endblock %}
