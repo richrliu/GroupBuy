@@ -194,6 +194,14 @@ router.get('/users', function(req, res) {
   });
 });
 
+router.get('/search', function(req, res) {
+  res.render('searchform');
+});
+
+router.post('/searchform', function(req, res) {
+  res.redirect('/search/'+req.body.search);
+})
+
 // Search for users, etc.
 router.get('/search/:term', function(req, res) {
   models.Users.findAll({
