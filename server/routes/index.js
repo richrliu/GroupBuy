@@ -285,7 +285,7 @@ router.get('/viewloan/:id', function(req, res) {
               loan: loan,
               loanStatus: toTitleCase((loan.CompletionStatus).replace(/_/g, ' ')),
               userIsLender: userIsLender,
-              userIsReceiver: userIsReceiver
+              userIsReceiver: userIsReceiver,
             });
           }
         });
