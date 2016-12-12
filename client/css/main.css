@@ -276,3 +276,37 @@ table {
             color: green; }
           .container #user-home .home-info .active-info .loan-group .element .amount-owed-to {
             color: red; }
+
+
+
+.tag_false, .tag_denied {
+  background: red;
+  color: white;
+  border-radius: 10px;
+  padding: 5px;
+  margin-left: 10px;
+}
+
+.tag_in_progress_late, .tag_in_progress_late {
+  background: orange;
+  color: white;
+  border-radius: 10px;
+  padding: 5px;
+  margin-left: 10px;
+}
+
+.tag_completed, .tag_completed_late {
+  background: green;
+  color: white;
+  border-radius: 10px;
+  padding: 5px;
+  margin-left: 10px;
+}
+
+.tag_pending_approval {
+  background: blue;
+  color: white;
+  border-radius: 10px;
+  padding: 5px;
+  margin-left: 10px;
+}
