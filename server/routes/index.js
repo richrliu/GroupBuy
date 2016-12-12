@@ -298,7 +298,8 @@ router.get('/requestTokenStep', function(req, res, next) {
         accounts.forEach(function(acct) {
           if (acct.primary && acct.currency == 'BTC') {
             acct.requestMoney(req.session.request_args, function(err, txn) {
-              console.log('my txn id is: ' + txn.id);
+              if (err) console.log(err);
+              if (txn) console.log("transaction: " + txn.id);
             });
           }
         });
@@ -358,6 +359,53 @@ router.get('/requestComplete', function(req, res, next) {
 
 router.get('/newRequest', function(req, res, next) {
   res.render('newRequest');
+});
+
+router.get('/newRequest/:username', function(req, res, next) {
+  res.render('newRequest', {username: req.params.username});
+});
+
+router.post('/newRequest', function(req, res, next) {
+  var lender = req.body.lenderUsername;
+  var receiver = req.session.loggedinuser.Username;
+  var amount = req.body.amount;
+  var endDate = req.body.LoanEndDate;
+  var interestRate = req.body.interest;
+  var finalAmount = amount*(1+interestRate);
+
+  var scope = 'wallet:accounts:read, wallet:transactions:request, wallet:transactions:send, user';
+  var redirect_uri = 'http://localhost:5000/requestTokenStep';
+
+  models.Loan.create({
+    Amount: amount,
+    ExpectedEndDate: endDate,
+    InterestRate: interestRate,
+    AmountRemaining: amount,
+    Lender: lender,
+    Receiver: receiver
+  }).then(function(loan) {
+    models.Profile.findOne({
+      where: {
+        UserUsername: lender
+      }
+    }).then(function(lender) {
+      var args = {
+        "to": lender.Email,
+        "amount": finalAmount,
+        "currency": "BTC",
+        "description": "PalPay"
+      };
+      console.log(args);
+      req.session.request_args = args;
+      var authorization_uri = COINBASE_HOST + COINBASE_AUTHORIZE_PATH;
+      authorization_uri += '?scope=' + scope;
+      authorization_uri += '&redirect_uri=' + redirect_uri;
+      authorization_uri += '&meta[send_limit_amount]=1' + '&meta[send_limit_currency]=USD' + '&meta[send_limit_period]=day';
+      authorization_uri += '&client_id=' + COINBASE_CLIENT_ID;
+      authorization_uri += '&response_type=code';
+      res.redirect(authorization_uri);
+    });
+  });
 });
 
 
