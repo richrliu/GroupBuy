@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+
+{% block title %}{% endblock %}
+
+
+{% block content %}
+
+<div class="container">
+    {% include 'sidebar.html' %}
+
+    <div id="new-message">
+      <h6 class="error-box">{{ error }}</h6>
+        <div class="message-group">
+            <h1>New Message</h1>
+            <form method="post" id="registration-form" action="/newMessage">
+              <div class="form-element">
+                  <p>Reciever Username</p>
+                  <input type="text" class="form-control" id="MessageReceiver" name="MessageReceiver">
+              </div>
+              <div class="form-element">
+                  <p>Message</p>
+                  <input type="text" class="form-control" id="Message" name="Message">
+              </div>
+              <input type="submit" class="form-control" id="submit-btn"/>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

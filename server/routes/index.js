@@ -212,15 +212,117 @@ router.post('/loan', function(req, res) {
 
 
 //-- MESSAGE ENDPOITNS
-router.post('/message', function(req, res) {
-  models.Message.create({
-    Text: req.query.text,
-    TimeSent: new Date(),
-    SenderName: req.query.senderName, //TODO: Update sender using cookies n shit
-    ReceiverName: req.query.receiverName
-  }).then(function(loan) {
-    res.json(loan);
+
+router.get('/newMessage', function (req, res, next) {
+  res.render('newMessage');
+});
+
+router.post('/newMessage', function(req, res) {
+  var sender = req.session.loggedinuser.Username;
+  var receiver = req.body.MessageReceiver;
+  var message = req.body.Message;
+
+  models.Conversation.findOne(
+    {where: 
+      {
+      $or: [
+        {$and: {User1: sender, User2: receiver}},
+        {$and: {User1: receiver, User2: sender}}
+      ]}}
+    ).then(function(conversation) {
+      if (conversation === null) {
+        
+        models.Conversation.create({
+          User1: sender,
+          User2: receiver
+        }).then(function(newConversation) {
+
+          models.Message.create({
+            Text: message,
+            TimeSent: new Date(),
+            SenderName: sender, //TODO: Update sender using cookies n shit
+            ReceiverName: receiver,
+            ConversationId: newConversation.id
+          }).then(function(newMessage) {
+            res.json(newMessage);
+        });
+        });
+      } else {
+        res.render('newMessage', { error: 'You\'re already in a conversation with this person.' });
+      }
+    })
+});
+
+router.post('/message', function (req, res) {
+  var sender = req.session.loggedinuser.Username;
+  var receiver = req.body.receiver;
+  var message = req.body.message;
+
+  models.Conversation.findOne(
+    {where: 
+      {
+      $or: [
+        {$and: {User1: sender, User2: receiver}},
+        {$and: {User1: receiver, User2: sender}}
+      ]}}
+    ).then(function(conversation) {
+        models.Message.create({
+          Text: message,
+          TimeSent: new Date(),
+          SenderName: sender,
+          ReceiverName: receiver,
+          ConversationId: conversation.id
+    }).then(function(message) {
+      res.redirect('http://localhost:5000/conversations/'+receiver);
+    });
   });
+});
+
+router.get('/conversations', function (req, res, next) {
+  models.Conversation.findAll(
+  {
+    attributes: [['User1','User']],
+    where: 
+    {
+      User2: req.session.loggedinuser.Username
+    }
+  }).then(function(conversations) {
+      models.Conversation.findAll(
+    {
+      attributes: [['User2','User']],
+      where:
+      {
+        User1: req.session.loggedinuser.Username
+      }
+    }).then(function(conversations2) {
+      res.render('conversations', {
+        users: conversations.concat(conversations2)
+      });
+    });
+  });
+});
+
+//req.params.username
+router.get('/conversations/:username', function (req, res) {
+  var user = req.session.loggedinuser.Username;
+  var friend = req.params.username;
+  models.Message.findAll(
+  {
+    order: '"createdAt" ASC',
+    where:
+    {
+      $or: [
+        {$and: {SenderName: user, ReceiverName: friend}},
+        {$and: {SenderName: friend, ReceiverName: user}}
+      ]
+    }
+  }).then(function(conversation) {
+    console.log(conversation);
+    res.render('convo', {
+      user: friend,
+      conversation: conversation
+    });
+  })
 });
 
 //-- BITCOIN TESTING
