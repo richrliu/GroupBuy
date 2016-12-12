@@ -18,6 +18,7 @@
         <p><i>{{profile.Bio}}</i></p>
         {% if !isSelf %}
           <p><a href="/newRequest/{{profile.UserUsername}}">Request a Loan</a></p>
+          <p><a href="/newMessage/{{profile.UserUsername}}">Send a Message</a></p>
         {% endif %}
       </div>
     </div>
