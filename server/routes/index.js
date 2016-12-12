@@ -189,7 +189,8 @@ router.get('/search/:term', function(req, res) {
         model: models.Profile,
         where: {$or: [
           { First: { ilike: '%'+req.params.term+'%' } },
-          { Last: { ilike: '%'+req.params.term+'%' } }
+          { Last: { ilike: '%'+req.params.term+'%' } },
+          { UserUsername: { ilike: '%'+req.params.term+'%' } }
         ]}
     }]
   }).then(function(users) {
