@@ -1,6 +1,11 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
   var Profile = sequelize.define('Profile', {
+    UserUsername: {
+      type: DataTypes.STRING,
+      defaultValue: "",
+      primaryKey: true
+    },
     First: {
       type: DataTypes.STRING,
       defaultValue: ""
