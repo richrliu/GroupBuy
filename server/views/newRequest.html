@@ -10,11 +10,15 @@
 
     <div id="new-loan">
         <div class="loan-group">
-            <h1>New Loan</h1>
-            <form method="post" id="registration-form" action="/auth/coinbase/request">
+            <h1>Request A New Loan</h1>
+            <form method="post" id="registration-form" action="/newRequest">
               <div class="form-element">
-                  <p>Borrower Email</p>
-                  <input type="text" class="form-control" id="borrowerEmail" name="borrowerEmail">
+                  <p>Lender Username</p>
+                  {% if username %}
+                  <input type="text" class="form-control" id="lenderUsername" name="lenderUsername" value={{username}}>
+                  {% elif !username %}
+                  <input type="text" class="form-control" id="lenderUsername" name="lenderUsername">
+                  {% endif %}
               </div>
               <div class="form-element">
                   <p>Amount</p>
@@ -23,6 +27,10 @@
               <div class="form-element">
                   <p>Interest Rate</p>
                   <input type="text" class="form-control" id="interest" name="interest">
+              </div>
+              <div class="form-element">
+                  <p>End Date</p>
+                  <input type="date" class="form-control" id="LoanEndDate" name="LoanEndDate">
               </div>
               <input type="submit" class="form-control" id="submit-btn"/>
             </form>
