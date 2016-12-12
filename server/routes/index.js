@@ -221,22 +221,22 @@ router.get('/search/:term', function(req, res) {
 //-- PROFILE ENDPOINTS
 router.get('/profile', function(req, res) {
   var user = req.session.loggedinuser.Username;
-  showProfile(user, req, res);
+  showProfile(user, req, res, true);
 });
 
 router.get('/profile/:username', function(req, res) {
   var user = req.params.username;
-  showProfile(user, req, res);
+  showProfile(user, req, res, false);
 });
 
-function showProfile(user, req, res) {
+function showProfile(user, req, res, isSelf) {
   models.Profile.find({
     where: {
       UserUsername: user
     }
   }).then(function(profile) {
     if(profile){
-      res.render('profile', {profile: profile});
+      res.render('profile', {profile: profile, isSelf: isSelf});
     } else {
       res.send("Profile not found.");
     }
@@ -263,12 +263,18 @@ router.get('/viewloan/:id', function(req, res) {
       id: req.params.id
     }
   }).then(function(loan) {
-      var userIsLender = loan.Lender == req.session.loggedinuser.Username;
-      var userIsReceiver = loan.Receiver == req.session.loggedinuser.Username;
+      var userIsLender = loan.Lender == req.session.loggedinuser.Username && loan.CompletionStatus == 'pending_approval';
+      var userIsReceiver = loan.Receiver == 
+        req.session.loggedinuser.Username && loan.CompletionStatus != 'completed' && loan.CompletionStatus != 'completed_late';
       console.log(userIsLender);
       console.log(userIsReceiver);
       if (loan) {
-        res.render('viewloan', {loan: loan, userIsLender:userIsLender, userIsReceiver:userIsReceiver});
+        res.render('viewloan', {
+          loan: loan,
+          loanStatus: toTitleCase((loan.CompletionStatus).replace(/_/g, ' ')),
+          userIsLender: userIsLender,
+          userIsReceiver: userIsReceiver
+        });
       } else {
         res.send('Loan not found.');
       }
@@ -522,7 +528,7 @@ router.get('/requestTokenStep', function(req, res, next) {
           }
         });
       });
-      res.send('Trolol'); // TODO FIX
+      res.send('No code recieved from coinbase sorry lol'); // TODO FIX
     });
   }
 });
@@ -626,5 +632,10 @@ router.post('/newRequest', function(req, res, next) {
     });
   });
 });
+
+function toTitleCase(str)
+{
+    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+}
 
 module.exports = router;
