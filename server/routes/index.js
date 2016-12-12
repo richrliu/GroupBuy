@@ -374,39 +374,6 @@ router.get('/conversations/:username', function (req, res) {
   })
 });
 
-//-- BITCOIN TESTING
-// router.get('/bitcoin-test', function(req, res, next) {
-  // var Client = require('coinbase').Client;
-  // var client = new Client({'apiKey': 'PiYmM2Lf1U6BVXyV', 'apiSecret': 'jGk1HVFlxue1CLbIYhXLsu1kNFQcHaf4'});
-  // client.getAccounts({}, function(err, accounts) {
-  //   accounts.forEach(function(acct) {
-  //     if (acct.primary && acct.currency == 'BTC') {
-  //       var args = {
-  //         "to": "lolatme4@gmail.com",
-  //         "amount": "1",
-  //         "currency": "USD",
-  //         "description": "Sample transaction for you"
-  //       };
-  //       acct.requestMoney(args, function(err, txn) {
-  //         res.render('my txn id is: ' + txn.id);
-  //       });
-  //     }
-  //   });
-  // });
-// });
-
-router.get('/auth/coinbase',
-           passport.authenticate('coinbase'),
-           function(req, res) {
-            // The request will be redirected to Coinbase for authentication, so this
-            // function will not be called.
-           });
-
-router.get('/auth/coinbase/callback',
-           passport.authenticate('coinbase', { failureRedirect: '/register' }),
-           function(req, res) {
-            res.redirect('/');
-           });
 
 //-- COINBASE ENDPOINTS
 router.get('/requestTokenStep', function(req, res, next) {
