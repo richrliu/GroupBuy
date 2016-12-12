@@ -23,6 +23,13 @@
             {% elif userIsReceiver %}
             <a href = "/fulfillLoan/{{loan.id}}">Pay the Loan</a>
             {% endif %}
+            {% for fulfillment in fulfillments %}
+            <div class="fulfillment">
+                <h3>Fulfillment ID {{fulfillment.id}}</h3>
+                <p>Amount Paid: ฿{{fulfillment.Amount}}</p>
+                <p>Fulfilled On: {{fulfillment.createdAt.toString()}}</p>
+            </div>
+            {% endfor %}
         </div>
     </div>
 

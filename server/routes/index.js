@@ -266,14 +266,28 @@ router.get('/viewloan/:id', function(req, res) {
       var userIsLender = loan.Lender == req.session.loggedinuser.Username && loan.CompletionStatus == 'pending_approval';
       var userIsReceiver = loan.Receiver == 
         req.session.loggedinuser.Username && loan.CompletionStatus != 'completed' && loan.CompletionStatus != 'completed_late';
-      console.log(userIsLender);
-      console.log(userIsReceiver);
       if (loan) {
-        res.render('viewloan', {
-          loan: loan,
-          loanStatus: toTitleCase((loan.CompletionStatus).replace(/_/g, ' ')),
-          userIsLender: userIsLender,
-          userIsReceiver: userIsReceiver
+        models.Fulfillment.findAll({
+          where: {
+            LoanID: loan.id
+          }
+        }).then(function(fulfillments) {
+          if (fulfillments) {
+            res.render('viewloan', {
+              loan: loan,
+              loanStatus: toTitleCase((loan.CompletionStatus).replace(/_/g, ' ')),
+              userIsLender: userIsLender,
+              userIsReceiver: userIsReceiver,
+              fulfillments: fulfillments
+            });
+          }  else {
+            res.render('viewloan', {
+              loan: loan,
+              loanStatus: toTitleCase((loan.CompletionStatus).replace(/_/g, ' ')),
+              userIsLender: userIsLender,
+              userIsReceiver: userIsReceiver
+            });
+          }
         });
       } else {
         res.send('Loan not found.');
