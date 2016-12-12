@@ -104,6 +104,7 @@ router.post('/newLoan', function (req, res, next) {
 
   models.Loan.create({
     Amount: amount,
+    FinalAmount: finalAmount,
     ExpectedEndDate: endDate,
     InterestRate: interestRate,
     AmountRemaining: amount,
@@ -115,6 +116,7 @@ router.post('/newLoan', function (req, res, next) {
         UserUsername: receiver
       }
     }).then(function(borrower) {
+      req.session.prevLoanId = loan.id;
       var args = {
         "to": borrower.Email,
         "amount": finalAmount,
@@ -299,7 +301,21 @@ router.get('/requestTokenStep', function(req, res, next) {
           if (acct.primary && acct.currency == 'BTC') {
             acct.requestMoney(req.session.request_args, function(err, txn) {
               if (err) console.log(err);
-              if (txn) console.log("transaction: " + txn.id);
+              if (txn) {
+                console.log("transaction: " + txn.id);
+                if (req.session.prevLoanId) {
+                  models.Loan.find({
+                    where: {
+                      id: req.session.prevLoanId
+                    }
+                  }).then(function(loan) {
+                    loan.updateAttributes({
+                      Loan_CoinbaseTxnId: txn.id
+                    });
+                    req.session.prevLoanId = null;
+                  })
+                }
+              }
             });
           }
         });
@@ -378,6 +394,7 @@ router.post('/newRequest', function(req, res, next) {
 
   models.Loan.create({
     Amount: amount,
+    FinalAmount: finalAmount,
     ExpectedEndDate: endDate,
     InterestRate: interestRate,
     AmountRemaining: amount,
@@ -389,13 +406,13 @@ router.post('/newRequest', function(req, res, next) {
         UserUsername: lender
       }
     }).then(function(lender) {
+      req.session.prevLoanId = loan.id;
       var args = {
         "to": lender.Email,
         "amount": finalAmount,
         "currency": "BTC",
         "description": "PalPay"
       };
-      console.log(args);
       req.session.request_args = args;
       var authorization_uri = COINBASE_HOST + COINBASE_AUTHORIZE_PATH;
       authorization_uri += '?scope=' + scope;

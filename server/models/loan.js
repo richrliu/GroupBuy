@@ -2,13 +2,20 @@
 module.exports = function(sequelize, DataTypes) {
   var Loan = sequelize.define('Loan', {
     CompletionStatus: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
+      type: DataTypes.STRING,
+      defaultValue: "pending_approval"
     },
     Amount: DataTypes.FLOAT,
+    FinalAmount: DataTypes.FLOAT,
     ExpectedEndDate: DataTypes.DATE,
     InterestRate: DataTypes.FLOAT,
-    AmountRemaining: DataTypes.FLOAT
+    AmountRemaining: DataTypes.FLOAT,
+    Loan_CoinbaseTxnId: {
+      type: DataTypes.STRING
+    },
+    Fulfillment_CoinbaseTxnId: {
+      type: DataTypes.STRING
+    },
   }, {
     classMethods: {
       associate: function(models) {
