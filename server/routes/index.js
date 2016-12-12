@@ -67,7 +67,7 @@ router.post('/profileupdate', function(req, res, next) {
         UserUsername: req.session.loggedinuser.Username
       }).then(function(new_profile) {
         console.log(new_profile);
-        res.redirect('/');
+        res.redirect('/profile');
       });
     } else {
       models.Profile.create({
@@ -81,7 +81,7 @@ router.post('/profileupdate', function(req, res, next) {
         UserUsername: req.session.loggedinuser.Username
       }).then(function(new_profile) {
         console.log(new_profile);
-        res.redirect('/');
+        res.redirect('/profile');
       });
     }
   });
@@ -204,7 +204,7 @@ router.get('/search/:term', function(req, res) {
         ]}
     }]
   }).then(function(users) {
-    res.json(users);
+    res.render('search', {users: users});
   });
 });
 
@@ -226,7 +226,7 @@ function showProfile(user, req, res) {
     }
   }).then(function(profile) {
     if(profile){
-      res.json(profile);
+      res.render('profile', {profile: profile});
     } else {
       res.send("Profile not found.");
     }
