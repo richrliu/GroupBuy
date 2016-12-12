@@ -320,9 +320,25 @@ router.get('/denyLoan/:loanid', function(req, res, next) {
   });
 });
 
-router.get('payLoan/:loanid', function(req, res, next) {
-  // TODO MUST IMPLEMENT
-  res.redirect('/viewloan/+req.params.loanid');
+router.get('/payLoan', function(req, res, next) {
+  res.render('payLoan');
+});
+
+router.get('/payLoan/:loanid', function(req, res, next) {
+  models.Loan.find({
+    where: {
+      id: req.params.loanid
+    }
+  }).then(function(loan) {
+    if (loan) {
+      var lender = loan.Lender;
+      var borrower = loan.Borrower;
+      var amountRemaining = loan.AmountRemaining;
+      res.render('payLoan', {lender:lender, borrower:borrower, amountRemaining:amountRemaining, id:req.params.loanid});
+    } else {
+      res.send('Loan not found :/');
+    }
+  });
 });
 
 //-- MESSAGE ENDPOITNS
@@ -577,10 +593,6 @@ router.get('/calculateRanking', function(req, res, next) {
   res.redirect(authorization_uri);
 });
 
-router.get('/requestComplete', function(req, res, next) {
-  res.json(req);
-});
-
 router.get('/newRequest', function(req, res, next) {
   res.render('newRequest');
 });
@@ -590,6 +602,50 @@ router.get('/newRequest/:username', function(req, res, next) {
 });
 
 router.post('/newRequest', function(req, res, next) {
+  var lender = req.body.lenderUsername;
+  var receiver = req.session.loggedinuser.Username;
+  var amount = req.body.amount;
+  var endDate = req.body.LoanEndDate;
+  var interestRate = req.body.interest;
+  var finalAmount = amount*(1+interestRate);
+
+  var scope = 'wallet:accounts:read, wallet:transactions:request, wallet:transactions:send, user';
+  var redirect_uri = 'http://localhost:5000/requestTokenStep';
+
+  models.Loan.create({
+    Amount: amount,
+    FinalAmount: finalAmount,
+    ExpectedEndDate: endDate,
+    InterestRate: interestRate,
+    AmountRemaining: amount,
+    Lender: lender,
+    Receiver: receiver
+  }).then(function(loan) {
+    models.Profile.findOne({
+      where: {
+        UserUsername: lender
+      }
+    }).then(function(lender) {
+      req.session.prevLoanId = loan.id;
+      var args = {
+        "to": lender.Email,
+        "amount": finalAmount,
+        "currency": "BTC",
+        "description": "PalPay"
+      };
+      req.session.request_args = args;
+      var authorization_uri = COINBASE_HOST + COINBASE_AUTHORIZE_PATH;
+      authorization_uri += '?scope=' + scope;
+      authorization_uri += '&redirect_uri=' + redirect_uri;
+      authorization_uri += '&meta[send_limit_amount]=1' + '&meta[send_limit_currency]=USD' + '&meta[send_limit_period]=day';
+      authorization_uri += '&client_id=' + COINBASE_CLIENT_ID;
+      authorization_uri += '&response_type=code';
+      res.redirect(authorization_uri);
+    });
+  });
+});
+
+router.post('/newFulfillment', function(req, res, next) {
   var lender = req.body.lenderUsername;
   var receiver = req.session.loggedinuser.Username;
   var amount = req.body.amount;

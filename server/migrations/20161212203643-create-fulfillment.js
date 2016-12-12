@@ -1,40 +1,24 @@
 'use strict';
 module.exports = {
   up: function(queryInterface, Sequelize) {
-    return queryInterface.createTable('Loans', {
+    return queryInterface.createTable('Fulfillments', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      CompletionStatus: {
-        type: Sequelize.STRING,
-        defaultValue: "pending_approval"
-      },
-      Amount: {
-        type: Sequelize.FLOAT
-      },
-      FinalAmount: {
-        type: Sequelize.FLOAT
-      },
-      ExpectedEndDate: {
-        type: Sequelize.DATE
-      },
-      InterestRate: {
-        type: Sequelize.FLOAT
-      },
-      AmountRemaining: {
-        type: Sequelize.FLOAT
-      },
       Lender: {
         type: Sequelize.STRING
       },
-      Receiver: {
+      Borrower: {
         type: Sequelize.STRING
       },
-      Loan_CoinbaseTxnId: {
+      CoinbaseTxnId: {
         type: Sequelize.STRING
+      },
+      Amount: {
+        type: Sequelize.FLOAT
       },
       createdAt: {
         allowNull: false,
@@ -47,6 +31,6 @@ module.exports = {
     });
   },
   down: function(queryInterface, Sequelize) {
-    return queryInterface.dropTable('Loans');
+    return queryInterface.dropTable('Fulfillments');
   }
 };
