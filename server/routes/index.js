@@ -221,22 +221,22 @@ router.get('/search/:term', function(req, res) {
 //-- PROFILE ENDPOINTS
 router.get('/profile', function(req, res) {
   var user = req.session.loggedinuser.Username;
-  showProfile(user, req, res);
+  showProfile(user, req, res, true);
 });
 
 router.get('/profile/:username', function(req, res) {
   var user = req.params.username;
-  showProfile(user, req, res);
+  showProfile(user, req, res, false);
 });
 
-function showProfile(user, req, res) {
+function showProfile(user, req, res, isSelf) {
   models.Profile.find({
     where: {
       UserUsername: user
     }
   }).then(function(profile) {
     if(profile){
-      res.render('profile', {profile: profile});
+      res.render('profile', {profile: profile, isSelf: isSelf});
     } else {
       res.send("Profile not found.");
     }
@@ -264,7 +264,10 @@ router.get('/viewloan/:id', function(req, res) {
     }
   }).then(function(loan) {
       if (loan) {
-        res.render('viewloan', {loan: loan});
+        res.render('viewloan', {
+          loan: loan,
+          loanStatus: toTitleCase((loan.CompletionStatus).replace(/_/g, ' '))
+        });
       } else {
         res.send('Loan not found.');
       }
@@ -328,7 +331,7 @@ router.get('/requestTokenStep', function(req, res, next) {
           }
         });
       });
-      res.send('Trolol'); // TODO FIX
+      res.send('No code recieved from coinbase sorry lol'); // TODO FIX
     });
   }
 });
@@ -433,5 +436,9 @@ router.post('/newRequest', function(req, res, next) {
   });
 });
 
+function toTitleCase(str)
+{
+    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+}
 
 module.exports = router;

@@ -9,7 +9,7 @@
 
     <div id="standard">
         <div class="group">
-            <h1>{{loan.Receiver}}'s loan<span class='tag_{{loan.CompletionStatus}}'>{{loan.CompletionStatus}}</span></h1>
+            <h1>{{loan.Receiver}}'s loan <span class='tag_{{loan.CompletionStatus}}'>{{loanStatus}}</span></h1>
             <progress value="{{loan.Amount - loan.AmountRemaining}}" max="{{loan.Amount}}"></progress>
             <p>Lender: <a href='/profile/{{loan.Lender}}'>{{loan.Lender}}</a></p>
             <p>Borrower: <a href='/profile/{{loan.Receiver}}'>{{loan.Receiver}}</a></p>

@@ -13,10 +13,12 @@
         <h1>{{(profile.First)}} {{(profile.Last)}} - {{(profile.UserUsername)}}</h1>
         <img style='width: 200px; height: 200px' src='{{profile.PictureURL}}'/>
         <p>Location: {{profile.Location}}</p>
-        <p>Email: {{profile.Email}}</p>
+        <p>Email: <a target="_blank" href='mailto:{{profile.Email}}'>{{profile.Email}}</a></p>
         <p>Phone: {{profile.PhoneNumber}}</p>
         <p><i>{{profile.Bio}}</i></p>
-        <p><a href="/newRequest/{{profile.UserUsername}}">Request a Loan</a></p>
+        {% if !isSelf %}
+          <p><a href="/newRequest/{{profile.UserUsername}}">Request a Loan</a></p>
+        {% endif %}
       </div>
     </div>
 </div>
