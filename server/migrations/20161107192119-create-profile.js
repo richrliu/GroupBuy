@@ -2,11 +2,10 @@
 module.exports = {
   up: function(queryInterface, Sequelize) {
     return queryInterface.createTable('Profiles', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
+      UserUsername: {
+        type: Sequelize.STRING,
+        defaultValue: "",
+        primaryKey: true
       },
       PictureURL: {
         type: Sequelize.STRING,

@@ -3,41 +3,20 @@ var router = express.Router();
 var models = require('../models/index');
 var md5 = require('blueimp-md5');
 var coinbase = require('coinbase');
-var passport = require('passport');
-var CoinbaseStrategy = require('passport-coinbase').Strategy;
+var request = require('request');
 
 
-// COINBASE PASSPORT
+// COINBASE CONFIG
 var COINBASE_CLIENT_ID = '6325553eb82c9a8a1963abd89814e838aff157918b257ca45bce72b3c0621e7a';
 var COINBASE_CLIENT_SECRET = '7c4a7a60e5bb33c534781dbbba8fe7b2f207d85317cfcb43eb96128dbd6eeac9';
+var COINBASE_HOST = 'https://www.coinbase.com';
+var COINBASE_TOKEN_PATH = '/oauth/token/';
+var COINBASE_AUTHORIZE_PATH = '/oauth/authorize/';
 var COINBASE_META = { 
     send_limit_amount : 1, 
     send_limit_currency : 'USD', 
     send_limit_period : 'day' 
 };
-passport.use(new CoinbaseStrategy({
-  clientID: COINBASE_CLIENT_ID,
-  clientSecret: COINBASE_CLIENT_SECRET,
-  callbackURL: "http://localhost:5000/auth/coinbase/callback",
-  scope: ['wallet:accounts:read', 'wallet:transactions:request', 'wallet:transactions:send', 'user']
-}, function(accessToken, refreshToken, profile, done) {
-  process.nextTick(function() {
-    return done(null, profile);
-  });
-}));
-passport._strategies.coinbase.authorizationParams = function(options) {     
-    var meta = {};
-    for(o in COINBASE_META){
-        meta['meta['+o+']'] = COINBASE_META[o]; 
-    };
-    return meta;
-};
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-passport.deserializeUser(function(obj, done) {
-  done(null, obj);
-});
 
 //Redirect to index or home, depending on loggedinuser
 function checkLogin(req) {
@@ -54,7 +33,17 @@ router.get('/', function(req, res, next) {
 
 router.get('/profilesetup', function (req, res, next) {
   if (checkLogin(req)) {
-    res.render('profilesetup');
+    models.Profile.find({
+      where: {
+        UserUsername: req.session.loggedinuser.Username
+      }
+    }).then(function(profile) {
+      if (profile) {
+        res.render('profilesetup', {profile:profile});
+      } else {
+        res.render('profilesetup');
+      }
+    });
   } else {
     res.redirect('/');
   }
@@ -63,10 +52,10 @@ router.get('/profilesetup', function (req, res, next) {
 router.post('/profileupdate', function(req, res, next) {
   models.Profile.find({
     where: {
-      UserUsername: req.session.loggedinuser.username
+      UserUsername: req.session.loggedinuser.Username
     }
   }).then(function(profile) {
-    if(profile){
+    if (profile) {
       profile.updateAttributes({
         First: req.body.first,
         Last: req.body.last,
@@ -74,12 +63,26 @@ router.post('/profileupdate', function(req, res, next) {
         Location: req.body.location,
         PhoneNumber: req.body.phone,
         Email: req.body.email,
-        Bio: req.body.bio
+        Bio: req.body.bio,
+        UserUsername: req.session.loggedinuser.Username
       }).then(function(new_profile) {
-        res.json(new_profile);
+        console.log(new_profile);
+        res.redirect('/profile');
       });
     } else {
-      res.send("Profile not found");
+      models.Profile.create({
+        First: req.body.first,
+        Last: req.body.last,
+        PictureURL: req.body.picture,
+        Location: req.body.location,
+        PhoneNumber: req.body.phone,
+        Email: req.body.email,
+        Bio: req.body.bio,
+        UserUsername: req.session.loggedinuser.Username
+      }).then(function(new_profile) {
+        console.log(new_profile);
+        res.redirect('/profile');
+      });
     }
   });
 });
@@ -89,11 +92,15 @@ router.get('/newLoan', function (req, res, next) {
 });
 
 router.post('/newLoan', function (req, res, next) {
-  var lender = req.body.LoanLender;
+  var lender = req.session.loggedinuser.Username;
   var receiver = req.body.LoanReceiver;
   var amount = req.body.LoanAmount;
   var endDate = req.body.LoanEndDate;
   var interestRate = req.body.LoanInterestRate;
+  var finalAmount = amount*(1+interestRate);
+
+  var scope = 'wallet:accounts:read, wallet:transactions:request, wallet:transactions:send, user';
+  var redirect_uri = 'http://localhost:5000/requestTokenStep';
 
   models.Loan.create({
     Amount: amount,
@@ -103,7 +110,26 @@ router.post('/newLoan', function (req, res, next) {
     Lender: lender,
     Receiver: receiver
   }).then(function(loan) {
-    res.json(loan);
+    models.Profile.findOne({
+      where: {
+        UserUsername: receiver
+      }
+    }).then(function(borrower) {
+      var args = {
+        "to": borrower.Email,
+        "amount": finalAmount,
+        "currency": "BTC",
+        "description": "PalPay"
+      };
+      req.session.request_args = args;
+      var authorization_uri = COINBASE_HOST + COINBASE_AUTHORIZE_PATH;
+      authorization_uri += '?scope=' + scope;
+      authorization_uri += '&redirect_uri=' + redirect_uri;
+      authorization_uri += '&meta[send_limit_amount]=1' + '&meta[send_limit_currency]=USD' + '&meta[send_limit_period]=day';
+      authorization_uri += '&client_id=' + COINBASE_CLIENT_ID;
+      authorization_uri += '&response_type=code';
+      res.redirect(authorization_uri);
+    });
   });
 });
 
@@ -166,23 +192,47 @@ router.get('/users', function(req, res) {
   });
 });
 
+// Search for users, etc.
+router.get('/search/:term', function(req, res) {
+  models.Users.findAll({
+    include: [{
+        model: models.Profile,
+        where: {$or: [
+          { First: { ilike: '%'+req.params.term+'%' } },
+          { Last: { ilike: '%'+req.params.term+'%' } },
+          { UserUsername: { ilike: '%'+req.params.term+'%' } }
+        ]}
+    }]
+  }).then(function(users) {
+    res.render('search', {users: users});
+  });
+});
+
 //-- PROFILE ENDPOINTS
-router.put('/profile/:username', function(req, res) {
+router.get('/profile', function(req, res) {
+  var user = req.session.loggedinuser.Username;
+  showProfile(user, req, res);
+});
+
+router.get('/profile/:username', function(req, res) {
+  var user = req.params.username;
+  showProfile(user, req, res);
+});
+
+function showProfile(user, req, res) {
   models.Profile.find({
     where: {
-      UserUsername: req.params.username
+      UserUsername: user
     }
   }).then(function(profile) {
     if(profile){
-      profile.updateAttributes({
-        PictureURL: req.query.PictureURL,
-        Description: req.query.Description
-      }).then(function(new_profile) {
-        res.send(new_profile);
-      });
+      res.render('profile', {profile: profile});
+    } else {
+      res.send("Profile not found.");
     }
   });
-});
+}
+
 
 //-- VENMODATA ENDPOINTS
 router.post('/venmodata', function(req, res) {
@@ -302,7 +352,6 @@ router.get('/conversations', function (req, res, next) {
   });
 });
 
-//req.params.username
 router.get('/conversations/:username', function (req, res) {
   var user = req.session.loggedinuser.Username;
   var friend = req.params.username;
@@ -358,5 +407,137 @@ router.get('/auth/coinbase/callback',
            function(req, res) {
             res.redirect('/');
            });
+
+//-- COINBASE ENDPOINTS
+router.get('/requestTokenStep', function(req, res, next) {
+  var code = req.query.code;
+  if (code) {
+    var args = {
+      code: code,
+      grant_type: 'authorization_code',
+      client_id: COINBASE_CLIENT_ID,
+      client_secret: COINBASE_CLIENT_SECRET,
+      redirect_uri: 'http://localhost:5000/requestTokenStep'
+    }
+    request({
+      url: COINBASE_HOST + COINBASE_TOKEN_PATH,
+      qs: args,
+      method: 'POST'
+    }, function(err, resp, body) {
+      var accessToken = JSON.parse(body).access_token;
+      var refreshToken = JSON.parse(body).refresh_token;
+      var Client = coinbase.Client;
+      var client = new Client({'accessToken': accessToken, 'refreshToken': refreshToken});
+      client.getAccounts({}, function(err, accounts) {
+        accounts.forEach(function(acct) {
+          if (acct.primary && acct.currency == 'BTC') {
+            acct.requestMoney(req.session.request_args, function(err, txn) {
+              console.log('my txn id is: ' + txn.id);
+            });
+          }
+        });
+      });
+      res.send('Trolol'); // TODO FIX
+    });
+  }
+});
+
+router.get('/rankingTokenStep', function(req, res, next) {
+  var code = req.query.code;
+  if (code) {
+    var args = {
+      code: code,
+      grant_type: 'authorization_code',
+      client_id: COINBASE_CLIENT_ID,
+      client_secret: COINBASE_CLIENT_SECRET,
+      redirect_uri: 'http://localhost:5000/rankingTokenStep'
+    }
+    request({
+      url: COINBASE_HOST + COINBASE_TOKEN_PATH,
+      qs: args,
+      method: 'POST'
+    }, function(err, resp, body) {
+      var accessToken = JSON.parse(body).access_token;
+      var refreshToken = JSON.parse(body).refresh_token;
+      var Client = coinbase.Client;
+      var client = new Client({'accessToken': accessToken, 'refreshToken': refreshToken});
+      client.getAccounts({}, function(err, accounts) {
+        accounts.forEach(function(acct) {
+          if (acct.primary && acct.currency == 'BTC') {
+            acct.getTransactions({}, function(err, txns) {
+              console.log(txns);
+            });
+          }
+        });
+      });
+      res.send('Trolol'); // TODO FIX
+    });
+  }
+});
+
+router.get('/calculateRanking', function(req, res, next) {
+  var redirect_uri = 'http://localhost:5000/rankingTokenStep';
+  var scope = 'wallet:accounts:read';
+  var authorization_uri = COINBASE_HOST + COINBASE_AUTHORIZE_PATH;
+  authorization_uri += '?scope=' + scope;
+  authorization_uri += '&redirect_uri=' + redirect_uri;
+  authorization_uri += '&client_id=' + COINBASE_CLIENT_ID;
+  authorization_uri += '&response_type=code';
+  res.redirect(authorization_uri);
+});
+
+router.get('/requestComplete', function(req, res, next) {
+  res.json(req);
+});
+
+router.get('/newRequest', function(req, res, next) {
+  res.render('newRequest');
+});
+
+router.get('/newRequest/:username', function(req, res, next) {
+  res.render('newRequest', {username: req.params.username});
+});
+
+router.post('/newRequest', function(req, res, next) {
+  var lender = req.body.lenderUsername;
+  var receiver = req.session.loggedinuser.Username;
+  var amount = req.body.amount;
+  var endDate = req.body.LoanEndDate;
+  var interestRate = req.body.interest;
+  var finalAmount = amount*(1+interestRate);
+
+  var scope = 'wallet:accounts:read, wallet:transactions:request, wallet:transactions:send, user';
+  var redirect_uri = 'http://localhost:5000/requestTokenStep';
+
+  models.Loan.create({
+    Amount: amount,
+    ExpectedEndDate: endDate,
+    InterestRate: interestRate,
+    AmountRemaining: amount,
+    Lender: lender,
+    Receiver: receiver
+  }).then(function(loan) {
+    models.Profile.findOne({
+      where: {
+        UserUsername: lender
+      }
+    }).then(function(borrower) {
+      var args = {
+        "to": borrower.Email,
+        "amount": finalAmount,
+        "currency": "BTC",
+        "description": "PalPay"
+      };
+      req.session.request_args = args;
+      var authorization_uri = COINBASE_HOST + COINBASE_AUTHORIZE_PATH;
+      authorization_uri += '?scope=' + scope;
+      authorization_uri += '&redirect_uri=' + redirect_uri;
+      authorization_uri += '&meta[send_limit_amount]=1' + '&meta[send_limit_currency]=USD' + '&meta[send_limit_period]=day';
+      authorization_uri += '&client_id=' + COINBASE_CLIENT_ID;
+      authorization_uri += '&response_type=code';
+      res.redirect(authorization_uri);
+    });
+  });
+});
 
 module.exports = router;
