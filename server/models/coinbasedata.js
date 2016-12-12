@@ -1,20 +1,18 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
-  var Users = sequelize.define('Users', {
+  var CoinbaseData = sequelize.define('CoinbaseData', {
     Username: {
       type: DataTypes.STRING,
-      primaryKey: true,
-      unique: true
+      primaryKey: true
     },
-    Password: DataTypes.STRING,
-    Ranking: DataTypes.DECIMAL
+    AccessToken: DataTypes.STRING,
+    RefreshToken: DataTypes.STRING
   }, {
     classMethods: {
       associate: function(models) {
         // associations can be defined here
-        Users.hasOne(models.Profile);
       }
     }
   });
-  return Users;
+  return CoinbaseData;
 };
