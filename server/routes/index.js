@@ -25,7 +25,32 @@ function checkLogin(req) {
 
 router.get('/', function(req, res, next) {
   if (checkLogin(req)) {
-    res.render('home', { user: req.session.loggedinuser });
+    models.Loan.findAll({
+      limit: 10,
+      order: [['ExpectedEndDate', 'ASC']],
+      where: {
+        Lender: req.session.loggedinuser.Username,
+        $or: [{CompletionStatus: "in_progress"}, {CompletionStatus: "in_progress_late"}]}
+    }).then(function(loans) {
+      models.Loan.findAll({
+        limit: 10,
+        order: [['ExpectedEndDate', 'ASC']],
+        where: {
+          Receiver: req.session.loggedinuser.Username,
+          $or: [{CompletionStatus: "in_progress"}, {CompletionStatus: "in_progress_late"}]}
+      }).then(function(debts) {
+          models.Loan.findAll({
+            limit: 10,
+            order: [['ExpectedEndDate', 'ASC']],
+            where: {
+              Lender: req.session.loggedinuser.Username,
+              CompletionStatus: "pending_approval"
+            }
+          }).then(function(pending) {
+            res.render('home', { user: req.session.loggedinuser, loans:loans, debts:debts, pending:pending });
+          });
+      });
+    });
   } else {
     res.render('index');
   }

@@ -14,91 +14,49 @@
               <div class="active-info">
                   <h2>Current Loans</h2>
                   <div class="loan-group">
-                      <div class="element">
-                          <h3>Loan To Person</h3>
-                          <h3 class="amount-owed-by">Loan Amount</h3>
-                          <h3 class="due-date">Loan Due Date</h3>
-                      </div>
+                      <ul>
+                      {% for loan in loans %}
+                        <div class="element">
+                            <h3>Loan To: {{loan.Receiver}}</h3>
+                            <h3 class="amount-owed-by">Loan Amount: {{loan.Amount}}</h3>
+                            <h3 class="due-date">Loan Due: {{loan.ExpectedEndDate.toISOString().substring(0, 10)}}</h3>
+                        </div>
+                      {% endfor %}
+                      </ul>
                   </div>
               </div>
               <div class="active-info">
                   <h2>Current Debts</h2>
                   <div class="loan-group">
-                      <div class="element">
-                          <h3>Loan From Person</h3>
-                          <h3 class="amount-owed-to">Loan Amount</h3>
-                          <h3 class="due-date">Loan Due Date</h3>
-                      </div>
-                      <div class="element">
-                          <h3>Loan From Person</h3>
-                          <h3 class="amount-owed-to">Loan Amount</h3>
-                          <h3 class="due-date">Loan Due Date</h3>
-                      </div>
-                      <div class="element">
-                          <h3>Loan From Person</h3>
-                          <h3 class="amount-owed-to">Loan Amount</h3>
-                          <h3 class="due-date">Loan Due Date</h3>
-                      </div>
-                      <div class="element">
-                          <h3>Loan From Person</h3>
-                          <h3 class="amount-owed-to">Loan Amount</h3>
-                          <h3 class="due-date">Loan Due Date</h3>
-                      </div>
-                      <div class="element">
-                          <h3>Loan From Person</h3>
-                          <h3 class="amount-owed-to">Loan Amount</h3>
-                          <h3 class="due-date">Loan Due Date</h3>
-                      </div>
-                      <div class="element">
-                          <h3>Loan From Person</h3>
-                          <h3 class="amount-owed-to">Loan Amount</h3>
-                          <h3 class="due-date">Loan Due Date</h3>
-                      </div>
-                      <div class="element">
-                          <h3>Loan From Person</h3>
-                          <h3 class="amount-owed-to">Loan Amount</h3>
-                          <h3 class="due-date">Loan Due Date</h3>
-                      </div>
-                      <div class="element">
-                          <h3>Loan From Person</h3>
-                          <h3 class="amount-owed-to">Loan Amount</h3>
-                          <h3 class="due-date">Loan Due Date</h3>
-                      </div>
-                      <div class="element">
-                          <h3>Loan From Person</h3>
-                          <h3 class="amount-owed-to">Loan Amount</h3>
-                          <h3 class="due-date">Loan Due Date</h3>
-                      </div>
-                      <div class="element">
-                          <h3>Loan From Person</h3>
-                          <h3 class="amount-owed-to">Loan Amount</h3>
-                          <h3 class="due-date">Loan Due Date</h3>
-                      </div>
-                      <div class="element">
-                          <h3>Loan From Person</h3>
-                          <h3 class="amount-owed-to">Loan Amount</h3>
-                          <h3 class="due-date">Loan Due Date</h3>
-                      </div>
-                      <div class="element">
-                          <h3>Loan From Person</h3>
-                          <h3 class="amount-owed-to">Loan Amount</h3>
-                          <h3 class="due-date">Loan Due Date</h3>
-                      </div>
-                      <div class="element">
-                          <h3>Loan From Person</h3>
-                          <h3 class="amount-owed-to">Loan Amount</h3>
-                          <h3 class="due-date">Loan Due Date</h3>
-                      </div>
-                      <div class="element">
-                          <h3>Loan From Person</h3>
-                          <h3 class="amount-owed-to">Loan Amount</h3>
-                          <h3 class="due-date">Loan Due Date</h3>
-                      </div>
+                    <ul>
+                      {% for debt in debts %}
+                        <div class="element">
+                            <h3>Loan From: {{debt.Lender}}</h3>
+                            <h3 class="amount-owed-to">Loan Amount: {{debt.Amount}}</h3>
+                            <h3 class="due-date">Loan Due: {{debt.ExpectedEndDate.toISOString().substring(0, 10)}}</h3>
+                        </div>
+                      {% endfor %}
+                    </ul>
+                  </div>
+              </div>
+          </div>
+          <div class="home-info">
+              <div class="active-info">
+                  <h2>Pending Loans</h2>
+                  <div class="loan-group">
+                      <ul>
+                      {% for pend in pending %}
+                        <div class="element">
+                            <h3>Loan To: {{pend.Receiver}}</h3>
+                            <h3 class="amount-owed-by">Loan Amount: {{pend.Amount}}</h3>
+                            <h3 class="due-date">Loan Due: {{pend.ExpectedEndDate.toISOString().substring(0, 10)}}</h3>
+                        </div>
+                      {% endfor %}
+                      </ul>
                   </div>
               </div>
           </div>
       </div>
-
   </div>
 
 {% endblock %}
