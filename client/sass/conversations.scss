@@ -1,0 +1,36 @@
+#conversations {
+    margin-top: 125px;
+    width: 100%;
+
+    padding: 0 100px;
+
+    .conversations-group {
+        width: 100%;
+        background-color: white;
+        border: 1px solid #dddddd;
+        padding: 50px 75px;
+
+        h1 {
+            font-size: 35px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 20px;
+            margin-bottom: 50px;
+        }
+
+        a {
+            padding: 15px 20px;
+            border-radius: 10px;
+            background-color: $watermelon;
+            color: white;
+            cursor: pointer;
+
+            &:hover {
+                text-decoration: none;
+                background-color: darken($watermelon, 15%);
+            }
+        }
+    }
+}

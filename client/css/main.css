@@ -146,7 +146,8 @@ table {
           border: none;
           color: #ffffff; }
 
-#new-loan {
+#new-form {
+  margin-top: 125px;
   width: 100%;
   height: 100vh;
   background-color: #eeeeee;
@@ -154,19 +155,18 @@ table {
   display: flex;
   -ms-flex-direction: column;
       flex-direction: column;
-  -ms-flex-pack: center;
-      justify-content: center;
   -ms-flex-align: center;
       align-items: center; }
-  #new-loan .loan-group {
+  #new-form .form-div {
     border: 1px solid #dddddd;
     border-radius: 5px;
     background-color: #ffffff;
     padding: 50px 75px; }
-    #new-loan .loan-group h1 {
+    #new-form .form-div h1 {
+      font-size: 35px;
       margin-bottom: 40px;
       color: #000000; }
-    #new-loan .loan-group .form-group {
+    #new-form .form-div .form-group {
       display: -ms-flexbox;
       display: flex;
       -ms-flex-direction: row;
@@ -174,16 +174,28 @@ table {
       -ms-flex-pack: justify;
           justify-content: space-between;
       width: 450px; }
-      #new-loan .loan-group .form-group .form-element {
+      #new-form .form-div .form-group .form-element {
         margin-bottom: 15px; }
-        #new-loan .loan-group .form-group .form-element input {
+        #new-form .form-div .form-group .form-element input {
           width: 200px; }
-        #new-loan .loan-group .form-group .form-element p {
+        #new-form .form-div .form-group .form-element p {
           font-size: 15px;
           color: #000000;
           margin-bottom: 5px; }
-    #new-loan .loan-group #submit-btn {
-      margin-bottom: 25px; }
+    #new-form .form-div #message-group {
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-direction: column;
+          flex-direction: column; }
+      #new-form .form-div #message-group #message-element textarea {
+        width: 100%;
+        height: 200px;
+        border: 1px solid #cccccc;
+        border-radius: 5px;
+        resize: none;
+        padding: 10px; }
+    #new-form .form-div #submit-btn {
+      margin-bottom: 10px; }
 
 #sidebar {
   display: -ms-flexbox;
@@ -313,3 +325,28 @@ body {
           margin-bottom: 10px; }
         #profile-section .group .main-info .secondary-info p {
           margin-bottom: 7px; }
+
+#conversations {
+  margin-top: 125px;
+  width: 100%;
+  padding: 0 100px; }
+  #conversations .conversations-group {
+    width: 100%;
+    background-color: white;
+    border: 1px solid #dddddd;
+    padding: 50px 75px; }
+    #conversations .conversations-group h1 {
+      font-size: 35px;
+      margin-bottom: 20px; }
+    #conversations .conversations-group h2 {
+      font-size: 20px;
+      margin-bottom: 50px; }
+    #conversations .conversations-group a {
+      padding: 15px 20px;
+      border-radius: 10px;
+      background-color: #ff383f;
+      color: white;
+      cursor: pointer; }
+      #conversations .conversations-group a:hover {
+        text-decoration: none;
+        background-color: #eb0008; }

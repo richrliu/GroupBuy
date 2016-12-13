@@ -10,13 +10,17 @@
 
     <div id="conversations">
         <div class="conversations-group">
-            <h1>Conversations</h1>
+            <h1>Messages</h1>
+            {% if users > 0 %}
             <ul>
             {% for user in users %}
                  <a href="http://localhost:5000/conversations/{{ user.dataValues.User }}">{{ user.dataValues.User }}</a><br>
             {% endfor %}
             </ul>
-            <a href="/newMessage">Send a Message</a>
+            {% else %}
+                <h2>No messages here. Start a new conversation!</h2>
+            {% endif %}
+            <a href="/newMessage">New Message</a>
         </div>
     </div>
 </div>

@@ -8,20 +8,24 @@
 <div class="container">
     {% include 'sidebar.html' %}
 
-    <div id="new-message">
-      <h6 class="error-box">{{ error }}</h6>
-        <div class="message-group">
+    <div id="new-form">
+        {% if error %}
+        <h6 class="error-box">{{ error }}</h6>
+        {% endif %}
+        <div class="form-div">
             <h1>New Message</h1>
             <form method="post" id="registration-form" action="/newMessage">
-              <div class="form-element">
-                  <p>Reciever Username</p>
-                  <input type="text" class="form-control" id="MessageReceiver" name="MessageReceiver" value={{ receiver }}>
-              </div>
-              <div class="form-element">
-                  <p>Message</p>
-                  <input type="text" class="form-control" id="Message" name="Message">
-              </div>
-              <input type="submit" class="form-control" id="submit-btn"/>
+                <div class="form-group" id="message-group">
+                    <div class="form-element">
+                        <p>Reciever Username</p>
+                        <input type="text" class="form-control" id="MessageReceiver" name="MessageReceiver" value={{ receiver }}>
+                    </div>
+                    <div class="form-element" id="message-element">
+                        <p>Message</p>
+                        <textarea colclass="form-control" id="Message" name="Message"></textarea>
+                    </div>
+                </div>
+              <input type="submit" class="form-control" id="submit-btn" value="Send"/>
             </form>
         </div>
     </div>

@@ -8,8 +8,8 @@
 <div class="container">
     {% include 'sidebar.html' %}
 
-    <div id="convo">
-        <div class="convo-group">
+    <div id="conversations">
+        <div class="conversations-group">
             <h1>Conversation with {{ user }}</h1>
             <ul>
             {% for message in conversation %}
@@ -19,7 +19,7 @@
             <form action="/message" method="post">
                 <input type="hidden" name="receiver" value={{ user }}>
                 <input type="text" name="message"><br>
-                <input type="submit" value="Send">
+                <input type="submit" id="submit-btn" value="Send">
             </form>
         </div>
     </div>
