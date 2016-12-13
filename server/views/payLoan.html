@@ -7,42 +7,46 @@
 <div class="container">
     {% include 'sidebar.html' %}
 
-    <div id="new-fulfillment">
+    <div id="new-loan">
         <div class="loan-group">
-            <h1>Fulfill a Loan</h1>
+            <h1>Fulfill Loan</h1>
             <form method="post" id="registration-form" action="/newFulfillment">
-              <div class="form-element">
-                  <p>Loan ID</p>
-                  {% if id %}
-                  <input type="text" class="form-control" id="loanID" name="loanID" value={{id}}>
-                  {% elif !id %}
-                  <input type="text" class="form-control" id="loanID" name="loanID">
-                  {% endif %}
-              </div>
-              <div class="form-element">
-                  <p>Lender Username</p>
-                  {% if lender %}
-                  <input type="text" class="form-control" id="lenderUsername" name="lenderUsername" value={{lender}}>
-                  {% elif !lender %}
-                  <input type="text" class="form-control" id="lenderUsername" name="lenderUsername">
-                  {% endif %}
-              </div>
-              <div class="form-element">
-                  <p>Borrower Username</p>
-                  {% if borrower %}
-                  <input type="text" class="form-control" id="borrowerUsername" name="borrowerUsername" value={{borrower}}>
-                  {% elif !borrower %}
-                  <input type="text" class="form-control" id="borrowerUsername" name="borrowerUsername">
-                  {% endif %}
-              </div>
-              <div class="form-element">
-                  <p>Amount to Pay (in BTC)</p>
-                  {% if amountRemaining %}
-                  <input type="text" class="form-control" id="amount" name="amount" value={{amountRemaining}}>
-                  {% elif !amountRemaining %}
-                  <input type="text" class="form-control" id="amount" name="amount">
-                  {% endif %}
-              </div>
+                <div class="form-group">
+                    <div class="form-element">
+                        <p>Loan ID</p>
+                        {% if id %}
+                        <input type="text" class="form-control" id="loanID" name="loanID" value={{id}}>
+                        {% elif !id %}
+                        <input type="text" class="form-control" id="loanID" name="loanID">
+                        {% endif %}
+                    </div>
+                    <div class="form-element">
+                        <p>Amount to Pay (in BTC)</p>
+                        {% if amountRemaining %}
+                        <input type="text" class="form-control" id="amount" name="amount" value={{amountRemaining}}>
+                        {% elif !amountRemaining %}
+                        <input type="text" class="form-control" id="amount" name="amount">
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-element">
+                        <p>Lender Username</p>
+                        {% if lender %}
+                        <input type="text" class="form-control" id="lenderUsername" name="lenderUsername" value={{lender}}>
+                        {% elif !lender %}
+                        <input type="text" class="form-control" id="lenderUsername" name="lenderUsername">
+                        {% endif %}
+                    </div>
+                    <div class="form-element">
+                        <p>Borrower Username</p>
+                        {% if borrower %}
+                        <input type="text" class="form-control" id="borrowerUsername" name="borrowerUsername" value={{borrower}}>
+                        {% elif !borrower %}
+                        <input type="text" class="form-control" id="borrowerUsername" name="borrowerUsername">
+                        {% endif %}
+                    </div>
+                </div>
               <input type="submit" class="form-control" id="submit-btn"/>
             </form>
         </div>
