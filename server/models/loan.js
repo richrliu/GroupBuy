@@ -12,10 +12,7 @@ module.exports = function(sequelize, DataTypes) {
     AmountRemaining: DataTypes.FLOAT,
     Loan_CoinbaseTxnId: {
       type: DataTypes.STRING
-    },
-    Fulfillment_CoinbaseTxnId: {
-      type: DataTypes.STRING
-    },
+    }
   }, {
     classMethods: {
       associate: function(models) {
