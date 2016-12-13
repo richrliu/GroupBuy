@@ -1,13 +1,16 @@
+body {
+    background-color: $neutral;
+}
+
 .container {
     #user-home {
+        padding: 0 100px;
+        margin-top: 125px;
         width: 100%;
-        background-color: #eeeeee;
 
         h1 {
             font-size: 50px;
             text-align: center;
-            margin-top: 50px;
-            margin-bottom: 75px;
         }
 
         .home-info {
@@ -15,43 +18,55 @@
             flex-direction: row;
             justify-content: space-around;
 
-            .active-info {
+            .info-group {
+                border-radius: 5px;
+                margin-top: 50px;
                 width: 45%;
-                height: 450px;
-                padding: 25px;
-                border: 1px solid;
                 background-color: white;
-                border-radius: 10px;
+                border: 1px solid #dddddd;
+                padding: 25px 40px;
+                min-height: 425px;
 
                 h2 {
-                    text-align: center;
+                    font-size: 30px;
                     margin-bottom: 25px;
                 }
 
-                .loan-group {
-                    border: 1px solid;
-                    border-radius: 5px;
-                    height: 300px;
-                    overflow: scroll;
+                .active-info {
 
-                    .element {
-                        display: flex;
-                        flex-direction: row;
-                        justify-content: space-around;
-                        align-items: center;
-                        height: 30px;
-                        border: 1px solid;
+                    h3 {
+                        display: inline-block;
+                        font-size: 15px;
+                        margin-bottom: 25px;
+                        border: 2px solid lighten($watermelon, 15%);
+                        border-radius: 20px;
+                        color: $dark-grey;
+                        padding: 8px 10px;
+                    }
 
-                        h3 {
-                            font-size: 15px;
-                        }
+                    .loan-group {
+                        .element {
+                            border-radius: 5px;
+                            display: flex;
+                            flex-direction: column;
+                            border: 1px solid lighten($watermelon, 10%);
+                            padding: 15px 20px;
+                            background-color: lighten($watermelon, 30%);
 
-                        .amount-owed-by {
-                            color: green;
-                        }
+                            h4 {
+                                margin-bottom: 10px;
+                                color: $dark-grey;
+                            }
 
-                        .amount-owed-to {
-                            color: red;
+                            .loan-info {
+                                display: flex;
+                                flex-direction: row;
+
+                                h5 {
+                                    margin-right: 20px;
+                                    color: $dark-grey;
+                                }
+                            }
                         }
                     }
                 }

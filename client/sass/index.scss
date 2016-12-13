@@ -1,27 +1,27 @@
 #submit-btn {
     margin-top: 25px;
-    background-color: #6db56d;
+    background-color: $watermelon;
     border: none;
     color: #ffffff;
 
     &:hover {
-        background-color: darken(#6db56d, 10%);
+        background-color: darken($watermelon, 15%);
     }
 }
 
 .error-box {
   color: red;
-  background-color: white;
   border-radius: 2px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   font-size: 18px;
 }
 
 .container {
-    width: 100%;
+    width: 100vw;
     padding: 0;
     display: flex;
     flex-direction: row;
+    background-color: $neutral;
 
     #landing {
         display: flex;
@@ -29,14 +29,13 @@
         justify-content: center;
         align-items: center;
 
-        background-color: #1c5be7;
-        width: 100%;
+        width: 100vw;
         height: 100vh;
 
         h1 {
             font-size: 50px;
             margin-bottom: 75px;
-            color: white;
+            color: black;
         }
 
         .login-register {
@@ -46,13 +45,14 @@
             width: 70%;
 
             .divider {
-                border: 0.5px solid white;
+                border: 1px solid $watermelon;
             }
 
             .form-group {
                 margin: 25px 0;
                 border-radius: 10px;
                 background-color: white;
+                border: 2px solid $watermelon;
                 width: 350px;
                 padding: 35px;
                 display: flex;

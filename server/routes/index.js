@@ -47,12 +47,76 @@ router.get('/', function(req, res, next) {
               CompletionStatus: "pending_approval"
             }
           }).then(function(pending) {
-            res.render('home', { user: req.session.loggedinuser, loans:loans, debts:debts, pending:pending });
+            res.render('home', { user: req.session.loggedinuser, loans: loans, debts: debts, pending: pending });
           });
       });
     });
   } else {
     res.render('index');
+  }
+});
+
+router.post('/login', function(req, res, next) {
+  var username = req.body.Username;
+  var hashedPW = md5(req.body.Password);
+  models.Users.findOne({where: {Username: username, Password: hashedPW}}).then(function(user) {
+    if (user === null) {
+      res.render('index', { error: 'User/Password not found.' });
+    } else {
+      req.session.loggedinuser = user.dataValues; //this is what logs users in
+
+      models.Loan.findAll({
+        limit: 10,
+        order: [['ExpectedEndDate', 'ASC']],
+        where: {
+          Lender: req.session.loggedinuser.Username,
+          $or: [{CompletionStatus: "in_progress"}, {CompletionStatus: "in_progress_late"}]}
+      }).then(function(loans) {
+        models.Loan.findAll({
+          limit: 10,
+          order: [['ExpectedEndDate', 'ASC']],
+          where: {
+            Receiver: req.session.loggedinuser.Username,
+            $or: [{CompletionStatus: "in_progress"}, {CompletionStatus: "in_progress_late"}]}
+        }).then(function(debts) {
+            models.Loan.findAll({
+              limit: 10,
+              order: [['ExpectedEndDate', 'ASC']],
+              where: {
+                Lender: req.session.loggedinuser.Username,
+                CompletionStatus: "pending_approval"
+              }
+            }).then(function(pending) {
+              res.render('home', { user: req.session.loggedinuser, loans: loans, debts: debts, pending: pending });
+            });
+        });
+      });
+    }
+  });
+});
+
+router.all('/logout', function(req, res, next) {
+  req.session = null;
+  res.render('index', { error: 'Logged out.' });
+});
+
+router.post('/register', function(req, res, next) {
+  var username = req.body.UsernameRegistration;
+  var hashedPW = md5(req.body.PasswordRegistration);
+  var hashedPWConfirm = md5(req.body.ConfirmPasswordRegistration);
+  if (hashedPW == hashedPWConfirm) {
+    models.Users.findOne({where: {Username: username, Password: hashedPW}}).then(function(user) {
+      if (user === null) {
+        models.Users.create({Username: username, Password: hashedPW}).then(function(user) {
+          req.session.loggedinuser = user.dataValues; //this is what logs users in
+          res.render('profilesetup');
+        });
+      } else {
+        res.render('index', { error: 'User already exists. Did you forgot your password?' });
+      }
+    });
+  } else {
+    res.render('index', { error: 'Passwords didn\'t match.' });
   }
 });
 
@@ -64,7 +128,7 @@ router.get('/profilesetup', function (req, res, next) {
       }
     }).then(function(profile) {
       if (profile) {
-        res.render('profilesetup', {profile:profile});
+        res.render('profilesetup', {profile: profile});
       } else {
         res.render('profilesetup');
       }
@@ -160,44 +224,6 @@ router.post('/newLoan', function (req, res, next) {
   });
 });
 
-router.post('/login', function(req, res, next) {
-  var username = req.body.Username;
-  var hashedPW = md5(req.body.Password);
-  models.Users.findOne({where: {Username: username, Password: hashedPW}}).then(function(user) {
-    if (user === null) {
-      res.render('index', { error: 'User/Password not found.' });
-    } else {
-      req.session.loggedinuser = user.dataValues; //this is what logs users in
-      res.render('home', { user: JSON.stringify(req.session.loggedinuser) });
-    }
-  });
-});
-
-router.all('/logout', function(req, res, next) {
-  req.session = null;
-  res.render('index', { error: 'Logged out.' });
-});
-
-router.post('/register', function(req, res, next) {
-  var username = req.body.UsernameRegistration;
-  var hashedPW = md5(req.body.PasswordRegistration);
-  var hashedPWConfirm = md5(req.body.ConfirmPasswordRegistration);
-  if (hashedPW == hashedPWConfirm) {
-    models.Users.findOne({where: {Username: username, Password: hashedPW}}).then(function(user) {
-      if (user === null) {
-        models.Users.create({Username: username, Password: hashedPW}).then(function(user) {
-          req.session.loggedinuser = user.dataValues; //this is what logs users in
-          res.render('profilesetup');
-        });
-      } else {
-        res.render('index', { error: 'User already exists. Did you forgot your password?' });
-      }
-    });
-  } else {
-    res.render('index', { error: 'Passwords didn\'t match.' });
-  }
-});
-
 //-- USER ENDPOINTS
 router.post('/users', function(req, res) {
   var hashedPW = md5(req.query.Password);
@@ -261,11 +287,23 @@ function showProfile(user, req, res, isSelf) {
     }
   }).then(function(profile) {
     if(profile){
-      res.render('profile', {profile: profile, isSelf: isSelf});
+        if (!checkURL(profile.PictureURL)) {
+            profile.PictureURL = "/images/default-user.png";
+        }
+        res.render('profile', {profile: profile, isSelf: isSelf });
     } else {
       res.send("Profile not found.");
     }
   });
+}
+
+function checkURL(url) {
+    var res = url.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
+    if (res) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 //-- LOAN ENDPOINTS
@@ -289,7 +327,7 @@ router.get('/viewloan/:id', function(req, res) {
     }
   }).then(function(loan) {
       var userIsLender = loan.Lender == req.session.loggedinuser.Username && loan.CompletionStatus == 'pending_approval';
-      var userIsReceiver = loan.Receiver == 
+      var userIsReceiver = loan.Receiver ==
         req.session.loggedinuser.Username && loan.CompletionStatus != 'completed' && loan.CompletionStatus != 'completed_late';
       if (loan) {
         models.Fulfillment.findAll({
@@ -403,7 +441,7 @@ router.post('/newMessage', function(req, res) {
       res.render("newMessage", { error: 'Please check that you put the correct username.'})
     } else {
       models.Conversation.findOne(
-    {where: 
+    {where:
       {
       $or: [
         {$and: {User1: sender, User2: receiver}},
@@ -411,7 +449,7 @@ router.post('/newMessage', function(req, res) {
       ]}}
     ).then(function(conversation) {
       if (conversation === null) {
-        
+
         models.Conversation.create({
           User1: sender,
           User2: receiver
@@ -438,10 +476,10 @@ router.post('/newMessage', function(req, res) {
           ConversationId: conversation.id
         }).then(function(newMessage) {
           res.redirect('http://localhost:5000/conversations/'+receiver);
-        });      
+        });
       }
     });
-    } 
+    }
   });
 }
 });
@@ -452,7 +490,7 @@ router.get('/newMessage/:username', function(req, res) {
   if (receiver == '' || sender == '')
     res.render("newMessage", { error: 'Please fill in reciever.'})
   models.Conversation.findOne(
-    {where: 
+    {where:
       {
       $or: [
         {$and: {User1: sender, User2: receiver}},
@@ -473,7 +511,7 @@ router.post('/message', function (req, res) {
   var message = req.body.message;
 
   models.Conversation.findOne(
-    {where: 
+    {where:
       {
       $or: [
         {$and: {User1: sender, User2: receiver}},
@@ -496,7 +534,7 @@ router.get('/conversations', function (req, res, next) {
   models.Conversation.findAll(
   {
     attributes: [['User1','User']],
-    where: 
+    where:
     {
       User2: req.session.loggedinuser.Username
     }

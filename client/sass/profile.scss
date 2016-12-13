@@ -1,0 +1,51 @@
+
+#profile-section {
+    width: 100%;
+    padding: 0 100px;
+
+    .group {
+        padding: 35px 50px;
+        width: 100%;
+        min-height: 500px;
+        border: 1px solid #dddddd;
+        border-radius: 5px;
+        background-color: white;
+        margin-top: 125px;
+
+        display: flex;
+        flex-direction: row;
+
+        img {
+            margin-right: 50px;
+            width: 100%;
+        }
+
+        .main-info {
+            width: 100%;
+
+            h1 {
+                font-size: 35px;
+                margin-bottom: 10px;
+                color: $watermelon;
+            }
+
+            p {
+                font-size: 20px;
+                margin-bottom: 5px;
+            }
+
+            .secondary-info {
+                margin-top: 25px;
+
+                h2 {
+                    font-size: 25px;
+                    margin-bottom: 10px;
+                }
+
+                p {
+                    margin-bottom: 7px;
+                }
+            }
+        }
+    }
+}

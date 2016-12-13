@@ -8,20 +8,28 @@
 <div class="container">
     {% include 'sidebar.html' %}
 
-    <div id="standard">
+    <div id="profile-section">
       <div class="group">
-        <h1>{{(profile.First)}} {{(profile.Last)}} - {{(profile.UserUsername)}}</h1>
-        <img style='width: 200px; height: 200px' src='{{profile.PictureURL}}'/>
-        <p>Location: {{profile.Location}}</p>
-        <p>Email: <a target="_blank" href='mailto:{{profile.Email}}'>{{profile.Email}}</a></p>
-        <p>Phone: {{profile.PhoneNumber}}</p>
-        <p><i>{{profile.Bio}}</i></p>
-        {% if !isSelf %}
-          <p><a href="/newRequest/{{profile.UserUsername}}">Request a Loan</a></p>
-          <p><a href="/newMessage/{{profile.UserUsername}}">Send a Message</a></p>
-        {% endif %}
+          <img style='width: 200px; height: 200px' src='{{profile.PictureURL}}'/>
+          <div class="main-info">
+              <h1>{{(profile.First)}} {{(profile.Last)}} ({{(profile.UserUsername)}})</h1>
+              <p><i>{{profile.Location}}</i></p>
+              <div class="secondary-info">
+                  <h2>Contact Information</h2>
+                  <p>Email: <a target="_blank" href='mailto:{{profile.Email}}'>{{profile.Email}}</a></p>
+                  <p>Phone: {{profile.PhoneNumber}}</p>
+              </div>
+              <div class="secondary-info">
+                  <h2>Bio</h2>
+                  <p>{{profile.Bio}}</p>
+              </div>
+              {% if !isSelf %}
+                <p><a href="/newRequest/{{profile.UserUsername}}">Request a Loan</a></p>
+                <p><a href="/newMessage/{{profile.UserUsername}}">Send a Message</a></p>
+              {% endif %}
+            </div>
+          </div>
       </div>
-    </div>
-</div>
+  </div>
 
 {% endblock %}
