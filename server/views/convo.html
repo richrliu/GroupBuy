@@ -8,18 +8,20 @@
 <div class="container">
     {% include 'sidebar.html' %}
 
-    <div id="conversations">
-        <div class="conversations-group">
+    <div id="convo">
+        <div class="convo-group">
             <h1>Conversation with {{ user }}</h1>
-            <ul>
+            <ul class="chat-body">
             {% for message in conversation %}
-                 {{ message.dataValues.SenderName }}: {{ message.dataValues.TimeSent.toString() }} {{ message.dataValues.Text }} <br>
+                 <span><p class="sender"><b>{{ message.dataValues.SenderName }}</b>:</p> <p class="message-body"><i>{{ message.dataValues.TimeSent.toString() }}</i> {{ message.dataValues.Text }}</p></span><br />
             {% endfor %}
             </ul>
             <form action="/message" method="post">
-                <input type="hidden" name="receiver" value={{ user }}>
-                <input type="text" name="message"><br>
-                <input type="submit" id="submit-btn" value="Send">
+                <input type="hidden" name="receiver" value="{{ user }}" />
+                <div class="send-message">
+                    <textarea onkeyup="textAreaAdjust(this)" type="text" name="message" contentEditable="true" placeholder="Type a message..."></textarea>
+                    <input type="submit" class="form-control" id="submit-btn" value="Send" />
+                </div>
             </form>
         </div>
     </div>

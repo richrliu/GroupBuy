@@ -9,10 +9,29 @@
         background-color: white;
         border: 1px solid #dddddd;
         padding: 50px 75px;
+        border-radius: 5px;
+        height: 550px;
 
         h1 {
             font-size: 35px;
-            margin-bottom: 20px;
+            margin-bottom: 50px;
+        }
+
+        ul {
+            margin-bottom: 75px;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            overflow: scroll;
+            height: 250px;
+
+            a {
+                border-radius: 0;
+                background-color: lighten($watermelon, 10%);
+                margin-right: 20px;
+                margin-bottom: 20px;
+                height: 45px;
+            }
         }
 
         h2 {

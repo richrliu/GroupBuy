@@ -334,10 +334,28 @@ body {
     width: 100%;
     background-color: white;
     border: 1px solid #dddddd;
-    padding: 50px 75px; }
+    padding: 50px 75px;
+    border-radius: 5px;
+    height: 550px; }
     #conversations .conversations-group h1 {
       font-size: 35px;
-      margin-bottom: 20px; }
+      margin-bottom: 50px; }
+    #conversations .conversations-group ul {
+      margin-bottom: 75px;
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-direction: row;
+          flex-direction: row;
+      -ms-flex-wrap: wrap;
+          flex-wrap: wrap;
+      overflow: scroll;
+      height: 250px; }
+      #conversations .conversations-group ul a {
+        border-radius: 0;
+        background-color: #ff6b70;
+        margin-right: 20px;
+        margin-bottom: 20px;
+        height: 45px; }
     #conversations .conversations-group h2 {
       font-size: 20px;
       margin-bottom: 50px; }
@@ -350,3 +368,52 @@ body {
       #conversations .conversations-group a:hover {
         text-decoration: none;
         background-color: #eb0008; }
+
+#convo {
+  margin-top: 125px;
+  width: 100%;
+  padding: 0 100px;
+  margin-bottom: 50px; }
+  #convo .convo-group {
+    width: 100%;
+    background-color: white;
+    border: 1px solid #dddddd;
+    padding: 50px 75px;
+    border-radius: 5px; }
+    #convo .convo-group h1 {
+      font-size: 35px;
+      margin-bottom: 40px; }
+    #convo .convo-group ul {
+      border: 1px solid #dddddd;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 50px;
+      height: 400px;
+      overflow: scroll; }
+      #convo .convo-group ul p {
+        line-height: 20px; }
+    #convo .convo-group form {
+      margin-bottom: 25px; }
+      #convo .convo-group form .send-message {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: row;
+            flex-direction: row; }
+        #convo .convo-group form .send-message .form-control {
+          width: 90px;
+          height: 38px; }
+        #convo .convo-group form .send-message #submit-btn {
+          margin: 0;
+          -ms-flex-item-align: end;
+              align-self: flex-end; }
+        #convo .convo-group form .send-message textarea {
+          width: 60%;
+          height: 38px;
+          line-height: 18px;
+          font-size: 15px;
+          border: 1px solid #cccccc;
+          border-radius: 5px;
+          resize: none;
+          overflow: scroll;
+          padding: 10px 10px;
+          margin-right: 25px; }
