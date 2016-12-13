@@ -47,7 +47,7 @@ router.get('/', function(req, res, next) {
               CompletionStatus: "pending_approval"
             }
           }).then(function(pending) {
-            res.render('home', { user:req.session.loggedinuser, loans:loans, debts:debts, pending:pending });
+            res.render('home', { user: req.session.loggedinuser, loans:loans, debts:debts, pending:pending });
           });
       });
     });
@@ -246,22 +246,22 @@ router.get('/search/:term', function(req, res) {
 //-- PROFILE ENDPOINTS
 router.get('/profile', function(req, res) {
   var user = req.session.loggedinuser.Username;
-  showProfile(user, req, res);
+  showProfile(user, req, res, true);
 });
 
 router.get('/profile/:username', function(req, res) {
   var user = req.params.username;
-  showProfile(user, req, res);
+  showProfile(user, req, res, false);
 });
 
-function showProfile(user, req, res) {
+function showProfile(user, req, res, isSelf) {
   models.Profile.find({
     where: {
       UserUsername: user
     }
   }).then(function(profile) {
     if(profile){
-      res.render('profile', {profile: profile});
+      res.render('profile', {profile: profile, isSelf: isSelf});
     } else {
       res.send("Profile not found.");
     }
@@ -288,8 +288,32 @@ router.get('/viewloan/:id', function(req, res) {
       id: req.params.id
     }
   }).then(function(loan) {
+      var userIsLender = loan.Lender == req.session.loggedinuser.Username && loan.CompletionStatus == 'pending_approval';
+      var userIsReceiver = loan.Receiver == 
+        req.session.loggedinuser.Username && loan.CompletionStatus != 'completed' && loan.CompletionStatus != 'completed_late';
       if (loan) {
-        res.render('viewloan', {loan: loan});
+        models.Fulfillment.findAll({
+          where: {
+            LoanID: loan.id
+          }
+        }).then(function(fulfillments) {
+          if (fulfillments) {
+            res.render('viewloan', {
+              loan: loan,
+              loanStatus: toTitleCase((loan.CompletionStatus).replace(/_/g, ' ')),
+              userIsLender: userIsLender,
+              userIsReceiver: userIsReceiver,
+              fulfillments: fulfillments
+            });
+          }  else {
+            res.render('viewloan', {
+              loan: loan,
+              loanStatus: toTitleCase((loan.CompletionStatus).replace(/_/g, ' ')),
+              userIsLender: userIsLender,
+              userIsReceiver: userIsReceiver,
+            });
+          }
+        });
       } else {
         res.send('Loan not found.');
       }
@@ -297,17 +321,223 @@ router.get('/viewloan/:id', function(req, res) {
   });
 });
 
-//-- MESSAGE ENDPOITNS
-router.post('/message', function(req, res) {
-  models.Message.create({
-    Text: req.query.text,
-    TimeSent: new Date(),
-    SenderName: req.query.senderName, //TODO: Update sender using cookies n shit
-    ReceiverName: req.query.receiverName
+router.get('/acceptLoan/:loanid', function(req, res, next) {
+  models.Loan.find({
+    where: {
+      id: req.params.loanid
+    }
   }).then(function(loan) {
-    res.json(loan);
+    if (loan) {
+      var currDate = new Date();
+      var newStatus = currDate < loan.ExpectedEndDate ? 'in_progress' : 'in_progress_late';
+      loan.updateAttributes({
+        CompletionStatus: newStatus
+      }).then(function(new_loan){
+        res.redirect('/viewloan/'+req.params.loanid);
+      });
+    } else {
+      res.send('Loan not found :/');
+    }
   });
 });
+
+router.get('/denyLoan/:loanid', function(req, res, next) {
+  models.Loan.find({
+    where: {
+      id: req.params.loanid
+    }
+  }).then(function(loan) {
+    if (loan) {
+      loan.updateAttributes({
+        CompletionStatus: 'denied'
+      }).then(function(new_loan){
+        res.redirect('/viewloan/'+req.params.loanid);
+      });
+    } else {
+      res.send('Loan not found :/');
+    }
+  });
+});
+
+router.get('/payLoan', function(req, res, next) {
+  res.render('payLoan');
+});
+
+router.get('/payLoan/:loanid', function(req, res, next) {
+  models.Loan.find({
+    where: {
+      id: req.params.loanid
+    }
+  }).then(function(loan) {
+    if (loan) {
+      var lender = loan.Lender;
+      var borrower = loan.Receiver;
+      var amountRemaining = loan.AmountRemaining;
+      res.render('payLoan', {lender:lender, borrower:borrower, amountRemaining:amountRemaining, id:req.params.loanid});
+    } else {
+      res.send('Loan not found :/');
+    }
+  });
+});
+
+//-- MESSAGE ENDPOITNS
+
+router.get('/newMessage', function (req, res, next) {
+  res.render('newMessage');
+});
+
+router.post('/newMessage', function(req, res) {
+  var sender = req.session.loggedinuser.Username;
+  var receiver = req.body.MessageReceiver;
+  var message = req.body.Message;
+
+  if (receiver == '' || sender == '') {
+    res.render("newMessage", { error: 'Please fill in message receiver.'})
+  } else {
+      models.Users.findOne({
+    where: {
+      Username: receiver
+    }
+  }).then(function(user) {
+    if (user === null || receiver == sender) {
+      res.render("newMessage", { error: 'Please check that you put the correct username.'})
+    } else {
+      models.Conversation.findOne(
+    {where: 
+      {
+      $or: [
+        {$and: {User1: sender, User2: receiver}},
+        {$and: {User1: receiver, User2: sender}}
+      ]}}
+    ).then(function(conversation) {
+      if (conversation === null) {
+        
+        models.Conversation.create({
+          User1: sender,
+          User2: receiver
+        }).then(function(newConversation) {
+
+          models.Message.create({
+            Text: message,
+            TimeSent: new Date(),
+            SenderName: sender, //TODO: Update sender using cookies n shit
+            ReceiverName: receiver,
+            ConversationId: newConversation.id
+          }).then(function(newMessage) {
+            res.redirect('http://localhost:5000/conversations/'+receiver);
+        });
+        });
+      } else {
+        //res.render('newMessage', { error: 'You\'re already in a conversation with this person.' });
+
+        models.Message.create({
+          Text: message,
+          TimeSent: new Date(),
+          SenderName: sender, //TODO: Update sender using cookies n shit
+          ReceiverName: receiver,
+          ConversationId: conversation.id
+        }).then(function(newMessage) {
+          res.redirect('http://localhost:5000/conversations/'+receiver);
+        });      
+      }
+    });
+    } 
+  });
+}
+});
+
+router.get('/newMessage/:username', function(req, res) {
+  var receiver = req.params.username;
+  var sender = req.session.loggedinuser.Username;
+  if (receiver == '' || sender == '')
+    res.render("newMessage", { error: 'Please fill in reciever.'})
+  models.Conversation.findOne(
+    {where: 
+      {
+      $or: [
+        {$and: {User1: sender, User2: receiver}},
+        {$and: {User1: receiver, User2: sender}}
+      ]}}
+    ).then(function(conversation) {
+      if (conversation === null) {
+        res.render('newMessage', {receiver: receiver});
+      } else {
+        res.redirect('http://localhost:5000/conversations/'+receiver);
+      }
+    });
+});
+
+router.post('/message', function (req, res) {
+  var sender = req.session.loggedinuser.Username;
+  var receiver = req.body.receiver;
+  var message = req.body.message;
+
+  models.Conversation.findOne(
+    {where: 
+      {
+      $or: [
+        {$and: {User1: sender, User2: receiver}},
+        {$and: {User1: receiver, User2: sender}}
+      ]}}
+    ).then(function(conversation) {
+        models.Message.create({
+          Text: message,
+          TimeSent: new Date(),
+          SenderName: sender,
+          ReceiverName: receiver,
+          ConversationId: conversation.id
+    }).then(function(message) {
+      res.redirect('http://localhost:5000/conversations/'+receiver);
+    });
+  });
+});
+
+router.get('/conversations', function (req, res, next) {
+  models.Conversation.findAll(
+  {
+    attributes: [['User1','User']],
+    where: 
+    {
+      User2: req.session.loggedinuser.Username
+    }
+  }).then(function(conversations) {
+      models.Conversation.findAll(
+    {
+      attributes: [['User2','User']],
+      where:
+      {
+        User1: req.session.loggedinuser.Username
+      }
+    }).then(function(conversations2) {
+      res.render('conversations', {
+        users: conversations.concat(conversations2)
+      });
+    });
+  });
+});
+
+router.get('/conversations/:username', function (req, res) {
+  var user = req.session.loggedinuser.Username;
+  var friend = req.params.username;
+  models.Message.findAll(
+  {
+    order: '"createdAt" ASC',
+    where:
+    {
+      $or: [
+        {$and: {SenderName: user, ReceiverName: friend}},
+        {$and: {SenderName: friend, ReceiverName: user}}
+      ]
+    }
+  }).then(function(conversation) {
+    console.log(conversation);
+    res.render('convo', {
+      user: friend,
+      conversation: conversation
+    });
+  })
+});
+
 
 //-- COINBASE ENDPOINTS
 router.get('/requestTokenStep', function(req, res, next) {
@@ -353,7 +583,55 @@ router.get('/requestTokenStep', function(req, res, next) {
           }
         });
       });
-      res.send('Trolol'); // TODO FIX
+      res.send('No code recieved from coinbase sorry lol'); // TODO FIX
+    });
+  }
+});
+
+router.get('/fulfillTokenStep', function(req, res, next) {
+  var code = req.query.code;
+  if (code) {
+    var args = {
+      code: code,
+      grant_type: 'authorization_code',
+      client_id: COINBASE_CLIENT_ID,
+      client_secret: COINBASE_CLIENT_SECRET,
+      redirect_uri: 'http://localhost:5000/fulfillTokenStep'
+    }
+    request({
+      url: COINBASE_HOST + COINBASE_TOKEN_PATH,
+      qs: args,
+      method: 'POST'
+    }, function(err, resp, body) {
+      var accessToken = JSON.parse(body).access_token;
+      var refreshToken = JSON.parse(body).refresh_token;
+      var Client = coinbase.Client;
+      var client = new Client({'accessToken': accessToken, 'refreshToken': refreshToken});
+      client.getAccounts({}, function(err, accounts) {
+        accounts.forEach(function(acct) {
+          if (acct.primary && acct.currency == 'BTC') {
+            acct.sendMoney(req.session.request_args, function(err, txn) {
+              if (err) console.log(err);
+              if (txn) {
+                console.log("transaction: " + txn.id);
+                if (req.session.prevFulfillmentID) {
+                  models.Fulfillment.find({
+                    where: {
+                      id: req.session.prevFulFillmentID
+                    }
+                  }).then(function(fulfillment) {
+                    fulfillment.updateAttributes({
+                      CoinbaseTxnId: txn.id
+                    });
+                    req.session.prevFulFillmentID = null;
+                  })
+                }
+              }
+            });
+          }
+        });
+      });
+      res.redirect('No code recieved from coinbase sorry lol'); // TODO FIX
     });
   }
 });
@@ -402,10 +680,6 @@ router.get('/calculateRanking', function(req, res, next) {
   res.redirect(authorization_uri);
 });
 
-router.get('/requestComplete', function(req, res, next) {
-  res.json(req);
-});
-
 router.get('/newRequest', function(req, res, next) {
   res.render('newRequest');
 });
@@ -430,7 +704,7 @@ router.post('/newRequest', function(req, res, next) {
     FinalAmount: finalAmount,
     ExpectedEndDate: endDate,
     InterestRate: interestRate,
-    AmountRemaining: amount,
+    AmountRemaining: finalAmount,
     Lender: lender,
     Receiver: receiver
   }).then(function(loan) {
@@ -458,5 +732,62 @@ router.post('/newRequest', function(req, res, next) {
   });
 });
 
+router.post('/newFulfillment', function(req, res, next) {
+  var lender = req.body.lenderUsername;
+  var receiver = req.session.loggedinuser.Username;
+  var amount = req.body.amount;
+  var loanid = req.body.loanID;
+
+  var scope = 'wallet:accounts:read, wallet:transactions:send, user';
+  var redirect_uri = 'http://localhost:5000/fulfillTokenStep';
+
+  models.Fulfillment.create({
+    Amount: amount,
+    Lender: lender,
+    Borrower: receiver,
+    LoanID: loanid
+  }).then(function(fulfillment) {
+    models.Loan.findOne({
+      where: {
+        id: loanid
+      }
+    }).then(function(loan) {
+      var newRemaining = loan.AmountRemaining - amount;
+      var isLate = new Date() < loan.endDate;
+      var newCompletionStatus = newRemaining <= 0 ? (isLate ? 'completed_late' : 'completed') : (isLate ? 'in_progress_late' : 'in_progress');
+      loan.updateAttributes({
+        AmountRemaining: newRemaining,
+        CompletionStatus: newCompletionStatus
+      }).then(function(new_loan){
+        models.Profile.findOne({
+          where: {
+            UserUsername: new_loan.Lender
+          }
+        }).then(function(lenderProfile){
+          req.session.prevFulfillmentID = fulfillment.id;
+          var args = {
+            "to": lenderProfile.Email,
+            "amount": amount,
+            "currency": "BTC",
+            "description": "PalPay"
+          };
+          req.session.request_args = args;
+          var authorization_uri = COINBASE_HOST + COINBASE_AUTHORIZE_PATH;
+          authorization_uri += '?scope=' + scope;
+          authorization_uri += '&redirect_uri=' + redirect_uri;
+          authorization_uri += '&meta[send_limit_amount]=1' + '&meta[send_limit_currency]=USD' + '&meta[send_limit_period]=day';
+          authorization_uri += '&client_id=' + COINBASE_CLIENT_ID;
+          authorization_uri += '&response_type=code';
+          res.redirect(authorization_uri);
+        });
+      });
+    });
+  });
+});
+
+function toTitleCase(str)
+{
+    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+}
 
 module.exports = router;
