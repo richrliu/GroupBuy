@@ -1,5 +1,6 @@
 node_modules
 
 **/client/css/main.css
+**/client/css/
 
 .DS_STORE
