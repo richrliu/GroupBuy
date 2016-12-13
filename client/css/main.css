@@ -159,20 +159,31 @@ table {
   -ms-flex-align: center;
       align-items: center; }
   #new-loan .loan-group {
-    width: 75%;
-    border: 1px solid black;
-    border-radius: 25px;
+    border: 1px solid #dddddd;
+    border-radius: 5px;
     background-color: #ffffff;
     padding: 50px 75px; }
     #new-loan .loan-group h1 {
-      text-align: center;
-      margin-bottom: 25px;
+      margin-bottom: 40px;
       color: #000000; }
-    #new-loan .loan-group .form-element {
-      margin-bottom: 15px; }
-      #new-loan .loan-group .form-element p {
-        color: #000000;
-        margin-bottom: 5px; }
+    #new-loan .loan-group .form-group {
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-direction: row;
+          flex-direction: row;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+      width: 450px; }
+      #new-loan .loan-group .form-group .form-element {
+        margin-bottom: 15px; }
+        #new-loan .loan-group .form-group .form-element input {
+          width: 200px; }
+        #new-loan .loan-group .form-group .form-element p {
+          font-size: 15px;
+          color: #000000;
+          margin-bottom: 5px; }
+    #new-loan .loan-group #submit-btn {
+      margin-bottom: 25px; }
 
 #sidebar {
   display: -ms-flexbox;

@@ -8,25 +8,39 @@
     align-items: center;
 
     .loan-group {
-        width: 75%;
-        border: 1px solid black;
-        border-radius: 25px;
+        border: 1px solid #dddddd;
+        border-radius: 5px;
         background-color: #ffffff;
         padding: 50px 75px;
 
         h1 {
-            text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 40px;
             color: #000000;
         }
 
-        .form-element {
-            margin-bottom: 15px;
+        .form-group {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 450px;
 
-            p {
-                color: #000000;
-                margin-bottom: 5px;
+            .form-element {
+                margin-bottom: 15px;
+
+                input {
+                    width: 200px;
+                }
+
+                p {
+                    font-size: 15px;
+                    color: #000000;
+                    margin-bottom: 5px;
+                }
             }
+        }
+
+        #submit-btn {
+            margin-bottom: 25px;
         }
     }
 }
