@@ -9,7 +9,7 @@ module.exports = {
       },
       PictureURL: {
         type: Sequelize.STRING,
-        defaultValue: ""
+        defaultValue: "/images/default-user.png"
       },
       Bio: {
         type: Sequelize.STRING,

@@ -7,15 +7,25 @@
 
 <div class="container">
   {% include 'sidebar.html' %}
-  <div id="standard">
-    <div class="group">
-
+  <div id="search-results">
+    <div class="results-group">
       <h1>Search Results</h1>
-      <ul class="people_list">
+      {% if users.all %}
+      <ul class="result-list">
         {% for user in users %}
-          <li>{{user.Profile.First}} {{user.Profile.Last}} - (<a href="/profile/{{user.Username}}">{{user.Username}}</a>)</li>
+          <li>
+              <img style='width: 100px; height: 100px' src="{{ user.Profile.PictureURL }}" onerror="checkURL('{{user.Profile.PictureURL}}', this)"/>
+              <div class="user-info">
+                  <p class="result-name">{{user.Profile.First}} {{user.Profile.Last}}</p>
+                  <a href="/profile/{{user.Username}}">{{user.Username}}</a>
+                  <p><i>{{user.Profile.Location}}</i></p>
+              </div>
+          </li>
         {% endfor %}
       </ul>
+      {% else %}
+      <h2>Could not find any users. Try a different search!</h2>
+      {% endif %}
     </div>
   </div>
 </div>

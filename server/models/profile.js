@@ -16,7 +16,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     PictureURL: {
       type: DataTypes.STRING,
-      defaultValue: ""
+      defaultValue: "/images/default-user.png"
     },
     Bio: {
       type: DataTypes.STRING,

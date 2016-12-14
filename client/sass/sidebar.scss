@@ -22,6 +22,35 @@
     h1 {
         padding: 10px;
         color: $watermelon;
+        margin-bottom: 10px;
+    }
+
+    form {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        input {
+            height: 30px;
+            font-size: 15px;
+            padding: 5px 8px;
+            border-radius: 2px 0 0 2px;
+            border: 1px solid #dddddd;
+            border-right: none;
+        }
+
+        #submit-btn {
+            align-self: center;
+            margin: 0;
+            border-radius: 0 2px 2px 0;
+            border: 1px solid $watermelon;
+
+            background-image: url("../images/search-icon.png");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 18px 18px;
+            width: 50px;
+        }
     }
 
     .options {
