@@ -2,14 +2,16 @@
 
 {% block title %}{% endblock %}
 
-
 {% block content %}
 
-<div class="container">
-    {% include 'sidebar.html' %}
+{% include 'sidebar.html' %}
 
+<div class="container">
     <div id="profile-section">
       <div class="group">
+          {% if isSelf %}
+          <a class="edit-btn" href="/profilesetup">Edit</a>
+          {% endif %}
           <img style='width: 200px; height: 200px' src='{{profile.PictureURL}}' />
           <div class="main-info">
               <h1>{{(profile.First)}} {{(profile.Last)}} ({{(profile.UserUsername)}})</h1>
@@ -19,13 +21,15 @@
                   <p>Email: <a target="_blank" href='mailto:{{profile.Email}}'>{{profile.Email}}</a></p>
                   <p>Phone: {{profile.PhoneNumber}}</p>
               </div>
-              <div class="secondary-info">
+              <div class="secondary-info" id="bio-section">
                   <h2>Bio</h2>
                   <p>{{profile.Bio}}</p>
               </div>
               {% if !isSelf %}
-                <p><a href="/newRequest/{{profile.UserUsername}}">Request a Loan</a></p>
-                <p><a href="/newMessage/{{profile.UserUsername}}">Send a Message</a></p>
+                <div class="requests">
+                    <a href="/newRequest/{{profile.UserUsername}}">Request a Loan</a>
+                    <a href="/newMessage/{{profile.UserUsername}}">Send a Message</a>
+                </div>
               {% endif %}
             </div>
           </div>

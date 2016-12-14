@@ -2,15 +2,15 @@
 
 {% block title %}{% endblock %}
 
-
 {% block content %}
 
+{% include 'sidebar.html' %}
+
 <div class="container">
-  {% include 'sidebar.html' %}
   <div id="search-results">
     <div class="results-group">
       <h1>Search Results</h1>
-      {% if users.all %}
+      {% if isPop %}
       <ul class="result-list">
         {% for user in users %}
           <li>

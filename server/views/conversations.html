@@ -2,14 +2,15 @@
 
 {% block title %}{% endblock %}
 
-
 {% block content %}
+
+{% include 'sidebar.html' %}
 
 <div class="container">
     <div id="conversations">
         <div class="conversations-group">
             <h1>Messages</h1>
-            {% if users.all %}
+            {% if isPop %}
             <ul>
             {% for user in users %}
                  <a href="http://localhost:5000/conversations/{{ user.dataValues.User }}">{{ user.dataValues.User }}</a><br>

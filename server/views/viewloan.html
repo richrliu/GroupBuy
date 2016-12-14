@@ -2,11 +2,11 @@
 
 {% block title %}{% endblock %}
 
-
 {% block content %}
-<div class="container">
-    {% include 'sidebar.html' %}
 
+{% include 'sidebar.html' %}
+
+<div class="container">
     <div id="standard">
         <div class="group">
             <h1>{{loan.Receiver}}'s loan <span class='tag_{{loan.CompletionStatus}}'>{{loanStatus}}</span></h1>

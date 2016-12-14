@@ -4,67 +4,76 @@
 
 {% block content %}
 
+{% include 'sidebar.html' %}
+
 <div class="container">
-    <h1>Welcome to PalPay!</h1>
-    <div class="profile-setup">
-        <div class="form-group">
-            <h4>First, we need a little info.</h4>
+    <div id="new-form">
+        <div class="form-div">
+            <h1>First, we need a little info.</h1>
             <form method="post" class="form-body" id="login-form" action="/profileupdate">
-                <div class="form-element">
-                    <label for="first">First Name</label>
-                    {% if profile.First.length == 0 %}
-                    <input type="text" class="form-control" id="first" name="first" placeholder="John">
-                    {% elif profile.First.length > 0 %}
-                    <input type="text" class="form-control" id="first" name="first" value={{profile.First}}>
-                    {% endif %}
+                <div class="form-group">
+                    <div class="form-element">
+                        <label for="first">First Name</label>
+                        {% if profile.First.length == 0 %}
+                        <input type="text" class="form-control" id="first" name="first" placeholder="John">
+                        {% elif profile.First.length > 0 %}
+                        <input type="text" class="form-control" id="first" name="first" value="{{profile.First}}">
+                        {% endif %}
+                    </div>
+                    <div class="form-element">
+                        <label for="last">Last Name</label>
+                        {% if profile.Last.length == 0 %}
+                        <input type="text" class="form-control" id="last" name="last" placeholder="Doe">
+                        {% elif profile.Last.length > 0 %}
+                        <input type="text" class="form-control" id="last" name="last" value="{{profile.Last}}">
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="form-element">
-                    <label for="last">Last Name</label>
-                    {% if profile.Last.length == 0 %}
-                    <input type="text" class="form-control" id="last" name="last" placeholder="Doe">
-                    {% elif profile.Last.length > 0 %}
-                    <input type="text" class="form-control" id="last" name="last" value={{profile.Last}}>
-                    {% endif %}
+                <div class="form-group">
+                    <div class="form-element">
+                        <label for="picture">Profile Picture</label>
+                        {% if profile.PictureURL.length == 0 %}
+                        <input type="text" class="form-control" id="picture" name="picture" placeholder="https://imgur.com/gallery/tmokP">
+                        {% elif profile.PictureURL.length > 0 %}
+                        <input type="text" class="form-control" id="picture" name="picture" value="{{profile.PictureURL}}">
+                        {% endif %}
+                    </div>
+                    <div class="form-element">
+                        <label for="location">Location</label>
+                        {% if profile.Location.length == 0 %}
+                        <input type="text" class="form-control" id="location" name="location" placeholder="Durham, NC">
+                        {% elif profile.Location.length > 0 %}
+                        <input type="text" class="form-control" id="location" name="location" value="{{profile.Location}}">
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="form-element">
-                    <label for="picture">Profile Picture</label>
-                    {% if profile.PictureURL.length == 0 %}
-                    <input type="text" class="form-control" id="picture" name="picture" placeholder="https://imgur.com/gallery/tmokP">
-                    {% elif profile.PictureURL.length > 0 %}
-                    <input type="text" class="form-control" id="picture" name="picture" value={{profile.PictureURL}}>
-                    {% endif %}
+                <div class="form-group">
+                    <div class="form-element">
+                        <label for="phone">Phone Number</label>
+                        {% if profile.PhoneNumber == 0 %}
+                        <input type="text" class="form-control" id="phone" name="phone" placeholder="503 222 4411">
+                        {% elif profile.PhoneNumber > 0 %}
+                        <input type="text" class="form-control" id="phone" name="phone" value="{{profile.PhoneNumber}}">
+                        {% endif %}
+                    </div>
+                    <div class="form-element">
+                        <label for="Email">Email</label>
+                        {% if profile.Email == 0 %}
+                        <input type="text" class="form-control" id="email" name="email" placeholder="john@doe.con">
+                        {% else %}
+                        <input type="text" class="form-control" id="email" name="email" value="{{profile.Email}}">
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="form-element">
-                    <label for="location">Location</label>
-                    {% if profile.Location.length == 0 %}
-                    <input type="text" class="form-control" id="location" name="location" placeholder="Durham, NC">
-                    {% elif profile.Location.length > 0 %}
-                    <input type="text" class="form-control" id="location" name="location" value={{profile.Location}}>
-                    {% endif %}
-                </div>
-                <div class="form-element">
-                    <label for="phone">Phone Number</label>
-                    {% if profile.PhoneNumber == 0 %}
-                    <input type="text" class="form-control" id="phone" name="phone" placeholder="503 222 4411">
-                    {% elif profile.PhoneNumber > 0 %}
-                    <input type="text" class="form-control" id="phone" name="phone" value={{PhoneNumber}}>
-                    {% endif %}
-                </div>
-                <div class="form-element">
-                    <label for="Email">Email</label>
-                    {% if profile.Email == 0 %}
-                    <input type="text" class="form-control" id="email" name="email" placeholder="john@doe.con">
-                    {% elif profile.Email > 0 %}
-                    <input type="text" class="form-control" id="email" name="email" value={{profile.Email}}>
-                    {% endif %}
-                </div>
-                <div class="form-element">
-                    <label for="bio">Short Bio</label>
-                    {% if profile.Bio == 0 %}
-                    <textarea type="text" class="form-control" id="bio" name="bio" placeholder="I'm John..."></textarea>
-                    {% elif profile.Bio > 0 %}
-                    <textarea type="text" class="form-control" id="bio" name="bio" value={{profile.Bio}}></textarea>
-                    {% endif %}
+                <div class="form-group">
+                    <div class="form-element" id="bio-element">
+                        <label for="bio">Short Bio</label>
+                        {% if profile.Bio == 0 %}
+                        <textarea type="text" class="form-control" id="bio" name="bio" placeholder="I'm John..."></textarea>
+                        {% else %}
+                        <textarea type="text" class="form-control" id="bio" name="bio">{{ profile.Bio }}</textarea>
+                        {% endif %}
+                    </div>
                 </div>
                 <input type="submit" class="form-control" id="submit-btn" value="Continue"/>
             </form>

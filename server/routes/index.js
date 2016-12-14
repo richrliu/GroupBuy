@@ -264,8 +264,12 @@ router.get('/search/:term', function(req, res) {
           { UserUsername: { ilike: '%'+req.params.term+'%' } }
         ]}
     }]
-  }).then(function(users) {
-    res.render('search', {users: users});
+  }).then(function(user_list) {
+      if (user_list.length > 0) {
+          res.render('search', {users: user_list, isPop: true});
+      } else {
+          res.render('search', {users: user_list, isPop: false});
+      }
   });
 });
 
@@ -277,7 +281,13 @@ router.get('/profile', function(req, res) {
 
 router.get('/profile/:username', function(req, res) {
   var user = req.params.username;
-  showProfile(user, req, res, false);
+  var user2 = req.session.loggedinuser.Username;
+
+  if (user == user2) {
+      showProfile(user, req, res, true);
+  } else {
+      showProfile(user, req, res, false);
+  }
 });
 
 function showProfile(user, req, res, isSelf) {
@@ -292,7 +302,7 @@ function showProfile(user, req, res, isSelf) {
         }
         res.render('profile', {profile: profile, isSelf: isSelf });
     } else {
-      res.send("Profile not found.");
+      res.render('profilesetup');
     }
   });
 }
@@ -547,9 +557,17 @@ router.get('/conversations', function (req, res, next) {
         User1: req.session.loggedinuser.Username
       }
     }).then(function(conversations2) {
-      res.render('conversations', {
-        users: conversations.concat(conversations2)
-      });
+        user_list = conversations.concat(conversations2);
+        if (user_list.length > 0) {
+            res.render('conversations', {
+              users: user_list, isPop: true
+            });
+        } else {
+            res.render('conversations', {
+              users: user_list, isPop: false
+            });
+        }
+
     });
   });
 });

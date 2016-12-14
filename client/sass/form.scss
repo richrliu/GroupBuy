@@ -26,16 +26,27 @@
             width: 450px;
 
             .form-element {
+                width: 48%;
                 margin-bottom: 15px;
+                margin-right: 0;
 
                 input {
-                    width: 200px;
                 }
 
-                p {
+                p, label {
                     font-size: 15px;
                     color: #000000;
                     margin-bottom: 5px;
+                }
+            }
+
+            #bio-element {
+                width: 100%;
+
+                textarea {
+                    resize: none;
+                    height: 100px;
+                    overflow: scroll;
                 }
             }
         }
@@ -45,6 +56,8 @@
             flex-direction: column;
 
             #message-element {
+                width: 100%;
+
                 textarea {
                     width: 100%;
                     height: 200px;
@@ -52,6 +65,7 @@
                     border: 1px solid #cccccc;
                     border-radius: 5px;
                     resize: none;
+                    overflow: scroll;
                     padding: 10px;
                 }
             }

@@ -175,25 +175,34 @@ table {
           justify-content: space-between;
       width: 450px; }
       #new-form .form-div .form-group .form-element {
-        margin-bottom: 15px; }
-        #new-form .form-div .form-group .form-element input {
-          width: 200px; }
-        #new-form .form-div .form-group .form-element p {
+        width: 48%;
+        margin-bottom: 15px;
+        margin-right: 0; }
+        #new-form .form-div .form-group .form-element p, #new-form .form-div .form-group .form-element label {
           font-size: 15px;
           color: #000000;
           margin-bottom: 5px; }
+      #new-form .form-div .form-group #bio-element {
+        width: 100%; }
+        #new-form .form-div .form-group #bio-element textarea {
+          resize: none;
+          height: 100px;
+          overflow: scroll; }
     #new-form .form-div #message-group {
       display: -ms-flexbox;
       display: flex;
       -ms-flex-direction: column;
           flex-direction: column; }
-      #new-form .form-div #message-group #message-element textarea {
-        width: 100%;
-        height: 200px;
-        border: 1px solid #cccccc;
-        border-radius: 5px;
-        resize: none;
-        padding: 10px; }
+      #new-form .form-div #message-group #message-element {
+        width: 100%; }
+        #new-form .form-div #message-group #message-element textarea {
+          width: 100%;
+          height: 200px;
+          border: 1px solid #cccccc;
+          border-radius: 5px;
+          resize: none;
+          overflow: scroll;
+          padding: 10px; }
     #new-form .form-div #submit-btn {
       margin-bottom: 10px; }
 
@@ -322,6 +331,7 @@ body {
   width: 100%;
   padding: 0 100px; }
   #profile-section .group {
+    position: relative;
     padding: 35px 50px;
     width: 100%;
     min-height: 500px;
@@ -333,9 +343,16 @@ body {
     display: flex;
     -ms-flex-direction: row;
         flex-direction: row; }
+    #profile-section .group .edit-btn {
+      position: absolute;
+      right: 50px;
+      top: 45px;
+      color: #ff383f;
+      font-size: 20px; }
     #profile-section .group img {
       margin-right: 50px;
-      width: 100%; }
+      width: 100%;
+      border: 1px solid #dddddd; }
     #profile-section .group .main-info {
       width: 100%; }
       #profile-section .group .main-info h1 {
@@ -346,12 +363,30 @@ body {
         font-size: 20px;
         margin-bottom: 5px; }
       #profile-section .group .main-info .secondary-info {
-        margin-top: 25px; }
+        margin-top: 25px;
+        margin-bottom: 25px; }
         #profile-section .group .main-info .secondary-info h2 {
           font-size: 25px;
           margin-bottom: 10px; }
         #profile-section .group .main-info .secondary-info p {
           margin-bottom: 7px; }
+      #profile-section .group .main-info #bio-section {
+        margin-bottom: 50px; }
+      #profile-section .group .main-info .requests {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: row;
+            flex-direction: row; }
+        #profile-section .group .main-info .requests a {
+          padding: 15px 20px;
+          border-radius: 10px;
+          background-color: #ff383f;
+          color: white;
+          cursor: pointer;
+          margin-right: 25px; }
+          #profile-section .group .main-info .requests a:hover {
+            text-decoration: none;
+            background-color: #eb0008; }
 
 #conversations {
   margin-top: 125px;
@@ -435,7 +470,7 @@ body {
               align-self: flex-end; }
         #convo .convo-group form .send-message textarea {
           width: 60%;
-          height: 38px;
+          height: 40px;
           line-height: 18px;
           font-size: 15px;
           border: 1px solid #cccccc;
@@ -485,9 +520,11 @@ body {
         width: 45%;
         border: 2px solid #ff383f;
         padding: 15px;
-        border-radius: 5px; }
+        border-radius: 5px;
+        margin-bottom: 40px; }
         #search-results .results-group .result-list li img {
-          margin-right: 25px; }
+          margin-right: 25px;
+          border: 1px solid #dddddd; }
         #search-results .results-group .result-list li .user-info {
           display: -ms-flexbox;
           display: flex;
