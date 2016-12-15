@@ -19,7 +19,7 @@
                         <div class="element">
                             <h4>{{pend.Receiver}}</h4>
                             <div class="loan-info">
-                                <h5 class="amount-owed-by">Amount: ${{pend.Amount}}</h5>
+                                <h5 class="amount-owed-by">Amount: {{pend.Amount}} BTC</h5>
                                 <h5 class="due-date">Due: {{pend.ExpectedEndDate.toISOString().substring(0, 10)}}</h5>
                             </div>
                         </div>
@@ -36,7 +36,7 @@
                         <div class="element">
                             <h4>Loan To: {{loan.Receiver}}</h4>
 
-                            <h5 class="amount-owed-by">Loan Amount: {{loan.Amount}}</h5>
+                            <h5 class="amount-owed-by">Loan Amount: {{loan.Amount}} BTC</h5>
                             <h5 class="due-date">Loan Due: {{loan.ExpectedEndDate.toISOString().substring(0, 10)}}</h5>
                         </div>
                       {% endfor %}
@@ -48,7 +48,7 @@
                       {% for debt in debts %}
                         <div class="element">
                             <h4>Loan From: {{debt.Lender}}</h4>
-                            <h5 class="amount-owed-to">Loan Amount: {{debt.Amount}}</h5>
+                            <h5 class="amount-owed-to">Loan Amount: {{debt.Amount}} BTC</h5>
                             <h5 class="due-date">Loan Due: {{debt.ExpectedEndDate.toISOString().substring(0, 10)}}</h5>
                         </div>
                       {% endfor %}

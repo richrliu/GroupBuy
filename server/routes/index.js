@@ -13,7 +13,7 @@ var COINBASE_HOST = 'https://www.coinbase.com';
 var COINBASE_TOKEN_PATH = '/oauth/token/';
 var COINBASE_AUTHORIZE_PATH = '/oauth/authorize/';
 var COINBASE_META = {
-    send_limit_amount : 1,
+    send_limit_amount : 100,
     send_limit_currency : 'USD',
     send_limit_period : 'day'
 };
@@ -216,7 +216,7 @@ router.post('/newLoan', function (req, res, next) {
       var authorization_uri = COINBASE_HOST + COINBASE_AUTHORIZE_PATH;
       authorization_uri += '?scope=' + scope;
       authorization_uri += '&redirect_uri=' + redirect_uri;
-      authorization_uri += '&meta[send_limit_amount]=1' + '&meta[send_limit_currency]=USD' + '&meta[send_limit_period]=day';
+      authorization_uri += '&meta[send_limit_amount]=100' + '&meta[send_limit_currency]=USD' + '&meta[send_limit_period]=day';
       authorization_uri += '&client_id=' + COINBASE_CLIENT_ID;
       authorization_uri += '&response_type=code';
       res.redirect(authorization_uri);
@@ -251,7 +251,7 @@ router.get('/search', function(req, res) {
 
 router.post('/searchform', function(req, res) {
   res.redirect('/search/'+req.body.search);
-})
+});
 
 // Search for users, etc.
 router.get('/search/:term', function(req, res) {
@@ -381,7 +381,18 @@ router.get('/acceptLoan/:loanid', function(req, res, next) {
       loan.updateAttributes({
         CompletionStatus: newStatus
       }).then(function(new_loan){
-        res.redirect('/viewloan/'+req.params.loanid);
+        var scope = 'wallet:accounts:read, wallet:transactions:request, wallet:transactions:read, wallet:transactions:send, user';
+        var redirect_uri = 'http://localhost:5000/acceptTokenStep';
+        req.session.prevAcceptTxnId = new_loan.Loan_CoinbaseTxnId;
+
+        var authorization_uri = COINBASE_HOST + COINBASE_AUTHORIZE_PATH;
+        authorization_uri += '?scope=' + scope;
+        authorization_uri += '&redirect_uri=' + redirect_uri;
+        authorization_uri += '&meta[send_limit_amount]=100' + '&meta[send_limit_currency]=USD' + '&meta[send_limit_period]=day';
+        authorization_uri += '&client_id=' + COINBASE_CLIENT_ID;
+        authorization_uri += '&response_type=code';
+        res.redirect(authorization_uri);
+        // res.redirect('/viewloan/'+req.params.loanid);
       });
     } else {
       res.send('Loan not found :/');
@@ -692,6 +703,47 @@ router.get('/fulfillTokenStep', function(req, res, next) {
   }
 });
 
+router.get('/acceptTokenStep', function(req, res, next) {
+  var code = req.query.code;
+  if (code) {
+    var args = {
+      code: code,
+      grant_type: 'authorization_code',
+      client_id: COINBASE_CLIENT_ID,
+      client_secret: COINBASE_CLIENT_SECRET,
+      redirect_uri: 'http://localhost:5000/acceptTokenStep'
+    }
+    request({
+      url: COINBASE_HOST + COINBASE_TOKEN_PATH,
+      qs: args,
+      method: 'POST'
+    }, function(err, resp, body) {
+      var accessToken = JSON.parse(body).access_token;
+      var refreshToken = JSON.parse(body).refresh_token;
+      var Client = coinbase.Client;
+      var client = new Client({'accessToken': accessToken, 'refreshToken': refreshToken});
+      client.getAccounts({}, function(err, accounts) {
+        accounts.forEach(function(acct) {
+          if (acct.primary && acct.currency == 'BTC') {
+            acct.getTransactions({}, function(err, txns) {
+              txns.forEach(function(txn) {
+                console.log("A txn");
+                if (txn.id == req.session.prevAcceptTxnId) {
+                  txn.complete(function(err, new_txn) {
+                    console.log(new_txn);
+                    req.session.prevAceptTxnId = null;
+                  });
+                }
+              });
+            });
+          }
+        });
+      });
+      res.send('No code recieved from coinbase sorry lol'); // TODO FIX
+    });
+  }
+});
+
 router.get('/rankingTokenStep', function(req, res, next) {
   var code = req.query.code;
   if (code) {
@@ -780,7 +832,7 @@ router.post('/newRequest', function(req, res, next) {
       var authorization_uri = COINBASE_HOST + COINBASE_AUTHORIZE_PATH;
       authorization_uri += '?scope=' + scope;
       authorization_uri += '&redirect_uri=' + redirect_uri;
-      authorization_uri += '&meta[send_limit_amount]=1' + '&meta[send_limit_currency]=USD' + '&meta[send_limit_period]=day';
+      authorization_uri += '&meta[send_limit_amount]=100' + '&meta[send_limit_currency]=USD' + '&meta[send_limit_period]=day';
       authorization_uri += '&client_id=' + COINBASE_CLIENT_ID;
       authorization_uri += '&response_type=code';
       res.redirect(authorization_uri);
@@ -831,7 +883,7 @@ router.post('/newFulfillment', function(req, res, next) {
           var authorization_uri = COINBASE_HOST + COINBASE_AUTHORIZE_PATH;
           authorization_uri += '?scope=' + scope;
           authorization_uri += '&redirect_uri=' + redirect_uri;
-          authorization_uri += '&meta[send_limit_amount]=1' + '&meta[send_limit_currency]=USD' + '&meta[send_limit_period]=day';
+          authorization_uri += '&meta[send_limit_amount]=100' + '&meta[send_limit_currency]=USD' + '&meta[send_limit_period]=day';
           authorization_uri += '&client_id=' + COINBASE_CLIENT_ID;
           authorization_uri += '&response_type=code';
           res.redirect(authorization_uri);
