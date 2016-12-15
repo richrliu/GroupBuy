@@ -300,7 +300,17 @@ function showProfile(user, req, res, isSelf) {
         if (!checkURL(profile.PictureURL)) {
             profile.PictureURL = "/images/default-user.png";
         }
-        res.render('profile', {profile: profile, isSelf: isSelf });
+        models.Users.find({
+          where: {
+            Username: user
+          }
+        }).then(function(theuser){
+          if (theuser) {
+            res.render('profile', {profile: profile, isSelf: isSelf, ranking: theuser.Ranking });
+          } else {
+            res.render('profile', {profile: profile, isSelf: isSelf });
+          }
+        });
     } else {
       res.render('profilesetup');
     }
@@ -802,7 +812,7 @@ router.post('/newRequest', function(req, res, next) {
   var amount = req.body.amount;
   var endDate = req.body.LoanEndDate;
   var interestRate = req.body.interest;
-  var finalAmount = amount*(1+interestRate);
+  var finalAmount = amount + amount*interestRate;
 
   var scope = 'wallet:accounts:read, wallet:transactions:request, wallet:transactions:send, user';
   var redirect_uri = 'http://localhost:5000/requestTokenStep';
@@ -824,7 +834,7 @@ router.post('/newRequest', function(req, res, next) {
       req.session.prevLoanId = loan.id;
       var args = {
         "to": lender.Email,
-        "amount": finalAmount,
+        "amount": amount,
         "currency": "BTC",
         "description": "PalPay"
       };
@@ -863,7 +873,7 @@ router.post('/newFulfillment', function(req, res, next) {
       var newRemaining = loan.AmountRemaining - amount;
       var isLate = new Date() < loan.endDate;
       var newCompletionStatus = newRemaining <= 0 ? (isLate ? 'completed_late' : 'completed') : (isLate ? 'in_progress_late' : 'in_progress');
-      models.User.findOne({
+      models.Users.findOne({
         where: {
           Username: loan.Receiver
         }
@@ -875,7 +885,7 @@ router.post('/newFulfillment', function(req, res, next) {
         }).then(function(past_loans) {
           var numCompletedOnTime = 0;
           var numCompleted = 0;
-          pastLoans.forEach(function(past_loan) {
+          past_loans.forEach(function(past_loan) {
             if (past_loan.CompletionStatus == 'completed' || past_loan.CompletionStatus == 'completed_late') {
               numCompleted++;
               if (past_loan.CompletionStatus == 'completed') {
