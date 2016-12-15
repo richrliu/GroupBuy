@@ -298,34 +298,51 @@ body {
       .container #user-home .home-info .info-group h2 {
         font-size: 30px;
         margin-bottom: 25px; }
-      .container #user-home .home-info .info-group .active-info h3 {
-        display: inline-block;
-        font-size: 15px;
-        margin-bottom: 25px;
-        border: 2px solid #ff8589;
-        border-radius: 20px;
-        color: #444444;
-        padding: 8px 10px; }
-      .container #user-home .home-info .info-group .active-info .loan-group .element {
-        border-radius: 5px;
-        display: -ms-flexbox;
-        display: flex;
-        -ms-flex-direction: column;
-            flex-direction: column;
-        border: 1px solid #ff6b70;
-        padding: 15px 20px;
-        background-color: #ffd1d3; }
-        .container #user-home .home-info .info-group .active-info .loan-group .element h4 {
-          margin-bottom: 10px;
-          color: #444444; }
-        .container #user-home .home-info .info-group .active-info .loan-group .element .loan-info {
+      .container #user-home .home-info .info-group .active-info {
+        margin-bottom: 40px; }
+        .container #user-home .home-info .info-group .active-info h3 {
+          display: inline-block;
+          font-size: 15px;
+          margin-bottom: 25px;
+          border: 2px solid #ff8589;
+          border-radius: 20px;
+          color: #444444;
+          padding: 8px 10px; }
+        .container #user-home .home-info .info-group .active-info .loan-group .element {
+          border-radius: 5px;
           display: -ms-flexbox;
           display: flex;
-          -ms-flex-direction: row;
-              flex-direction: row; }
-          .container #user-home .home-info .info-group .active-info .loan-group .element .loan-info h5 {
-            margin-right: 20px;
-            color: #444444; }
+          -ms-flex-direction: column;
+              flex-direction: column;
+          border: 1px solid #ff6b70;
+          padding: 15px 20px;
+          background-color: #ffd1d3;
+          margin-bottom: 20px;
+          position: relative; }
+          .container #user-home .home-info .info-group .active-info .loan-group .element .view-loan {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            cursor: pointer; }
+            .container #user-home .home-info .info-group .active-info .loan-group .element .view-loan:hover {
+              color: #337ab7; }
+          .container #user-home .home-info .info-group .active-info .loan-group .element h4 {
+            margin-bottom: 15px;
+            color: #444444;
+            display: inline-block; }
+            .container #user-home .home-info .info-group .active-info .loan-group .element h4 a {
+              color: #444444; }
+          .container #user-home .home-info .info-group .active-info .loan-group .element .loan-info {
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-direction: row;
+                flex-direction: row;
+            -ms-flex-wrap: wrap;
+                flex-wrap: wrap; }
+            .container #user-home .home-info .info-group .active-info .loan-group .element .loan-info h5 {
+              margin-right: 20px;
+              color: #444444;
+              margin-bottom: 5px; }
 
 #profile-section {
   width: 100%;
@@ -540,3 +557,59 @@ body {
     #search-results .results-group h2 {
       font-size: 20px;
       margin-bottom: 50px; }
+
+#view-loan {
+  margin-top: 125px;
+  width: 100%;
+  height: 100vh;
+  background-color: #eeeeee;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+      flex-direction: column;
+  -ms-flex-align: center;
+      align-items: center; }
+  #view-loan .group {
+    border: 1px solid #dddddd;
+    border-radius: 5px;
+    background-color: #ffffff;
+    padding: 50px 75px; }
+    #view-loan .group h1 {
+      font-size: 35px;
+      margin-bottom: 20px;
+      color: #000000; }
+    #view-loan .group h2 {
+      font-size: 25px;
+      font-style: italic;
+      margin-bottom: 15px; }
+    #view-loan .group progress[value] {
+      -webkit-appearance: none;
+         -moz-appearance: none;
+              appearance: none;
+      width: 100%;
+      height: 20px;
+      margin-bottom: 30px; }
+      #view-loan .group progress[value]::-webkit-progress-bar {
+        background-color: #a9a9a9;
+        border-radius: 3px; }
+      #view-loan .group progress[value]::-webkit-progress-value {
+        background-color: #ff6b70;
+        border-radius: 3px; }
+    #view-loan .group h3 {
+      margin-bottom: 15px; }
+    #view-loan .group p {
+      margin-bottom: 10px;
+      font-size: 16px; }
+      #view-loan .group p a {
+        cursor: pointer; }
+    #view-loan .group .space {
+      margin-bottom: 20px; }
+    #view-loan .group .btn {
+      padding: 8px 15px;
+      border-radius: 5px;
+      background-color: #ff383f;
+      color: white;
+      cursor: pointer;
+      margin-right: 15px; }
+    #view-loan .group .fulfillment h4 {
+      margin-bottom: 10px; }

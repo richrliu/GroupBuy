@@ -17,7 +17,8 @@
                       <ul class="loan-group">
                       {% for pend in pending %}
                         <div class="element">
-                            <a href="http://localhost:5000/profile/{{pend.Receiver}}"><h4>{{pend.Receiver}}</h4></a>
+                            <a class="view-loan" href="http://localhost:5000/viewloan/{{pend.id}}">View Loan</a>
+                            <h4><a href="http://localhost:5000/profile/{{pend.Receiver}}">{{pend.Receiver}}</a></h4>
                             <div class="loan-info">
                                 <h5 class="amount-owed-by">Amount: {{pend.Amount}} BTC</h5>
                                 <h5 class="due-date">Due: {{pend.ExpectedEndDate.toISOString().substring(0, 10)}}</h5>
@@ -35,11 +36,13 @@
                       <ul class="loan-group">
                       {% for loan in loans %}
                         <div class="element">
-                            <h4>Loan To: {{loan.Receiver}}</h4>
-
-                            <h5 class="amount-owed-by">Loan Amount: {{loan.Amount}} BTC</h5>
-                            <h5 class="due-date">Loan Due: {{loan.ExpectedEndDate.toISOString().substring(0, 10)}}</h5>
-                            <a href="http://localhost:5000/viewloan/{{debt.id}}"><h5 class="loan-id">Loan ID: {{debt.id}}</h5></a>
+                            <a class="view-loan" href="http://localhost:5000/viewloan/{{loan.id}}">View Loan</a>
+                            <h4>Loan To: <a href="http://localhost:5000/profile/{{loan.Receiver}}">{{loan.Receiver}}</a></h4>
+                            <div class="loan-info">
+                                <h5 class="amount-owed-by">Amount: {{loan.Amount}} BTC</h5>
+                                <h5 class="due-date">Due: {{loan.ExpectedEndDate.toISOString().substring(0, 10)}}</h5>
+                                <a href="http://localhost:5000/viewloan/{{loan.id}}"><h5 class="loan-id">Loan ID: {{loan.id}}</h5></a>
+                            </div>
                         </div>
                       {% endfor %}
                       </ul>
@@ -49,10 +52,13 @@
                       <ul class="loan-group">
                       {% for debt in debts %}
                         <div class="element">
-                            <h4>Loan From: {{debt.Lender}}</h4>
-                            <h5 class="amount-owed-to">Loan Amount: {{debt.Amount}} BTC</h5>
-                            <h5 class="due-date">Loan Due: {{debt.ExpectedEndDate.toISOString().substring(0, 10)}}</h5>
-                            <a href="http://localhost:5000/viewloan/{{debt.id}}"><h5 class="loan-id">Loan ID: {{debt.id}}</h5></a>
+                            <a class="view-loan" href="http://localhost:5000/viewloan/{{debt.id}}">View Loan</a>
+                            <h4>Loan From: <a href="http://localhost:5000/profile/{{debt.Lender}}">{{debt.Lender}}</a></h4>
+                            <div class="loan-info">
+                                <h5 class="amount-owed-to">Amount: {{debt.Amount}} BTC</h5>
+                                <h5 class="due-date">Due: {{debt.ExpectedEndDate.toISOString().substring(0, 10)}}</h5>
+                                <a href="http://localhost:5000/viewloan/{{debt.id}}"><h5 class="loan-id">Loan ID: {{debt.id}}</h5></a>
+                            </div>
                         </div>
                       {% endfor %}
                       </ul>

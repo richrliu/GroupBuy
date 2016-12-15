@@ -356,12 +356,18 @@ router.get('/viewloan/:id', function(req, res) {
           }
         }).then(function(fulfillments) {
           if (fulfillments) {
+              hasFill = false;
+              if (fulfillments.length > 0) {
+                  hasFill = true;
+              }
+
             res.render('viewloan', {
               loan: loan,
               loanStatus: toTitleCase((loan.CompletionStatus).replace(/_/g, ' ')),
               userIsLender: userIsLender,
               userIsReceiver: userIsReceiver,
-              fulfillments: fulfillments
+              fulfillments: fulfillments,
+              hasFill: hasFill
             });
           }  else {
             res.render('viewloan', {

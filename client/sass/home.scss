@@ -33,6 +33,7 @@ body {
                 }
 
                 .active-info {
+                    margin-bottom: 40px;
 
                     h3 {
                         display: inline-block;
@@ -52,19 +53,39 @@ body {
                             border: 1px solid lighten($watermelon, 10%);
                             padding: 15px 20px;
                             background-color: lighten($watermelon, 30%);
+                            margin-bottom: 20px;
+                            position: relative;
+
+                            .view-loan {
+                                position: absolute;
+                                top: 15px;
+                                right: 20px;
+                                cursor: pointer;
+
+                                &:hover {
+                                    color: #337ab7;
+                                }
+                            }
 
                             h4 {
-                                margin-bottom: 10px;
+                                margin-bottom: 15px;
                                 color: $dark-grey;
+                                display: inline-block;
+
+                                a {
+                                    color: $dark-grey;
+                                }
                             }
 
                             .loan-info {
                                 display: flex;
                                 flex-direction: row;
+                                flex-wrap: wrap;
 
                                 h5 {
                                     margin-right: 20px;
                                     color: $dark-grey;
+                                    margin-bottom: 5px;
                                 }
                             }
                         }

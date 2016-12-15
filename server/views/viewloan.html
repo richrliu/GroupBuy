@@ -7,31 +7,41 @@
 {% include 'sidebar.html' %}
 
 <div class="container">
-    <div id="standard">
+    <div id="view-loan">
         <div class="group">
-            <h1>{{loan.Receiver}}'s loan <span class='tag_{{loan.CompletionStatus}}'>{{loanStatus}}</span></h1>
+            <h1>{{loan.Receiver}}'s Transaction</h1>
+            <h2><span class='tag_{{loan.CompletionStatus}}'>{{loanStatus}}</span></h2>
             <progress value="{{loan.Amount - loan.AmountRemaining}}" max="{{loan.Amount}}"></progress>
-            <p>Lender: <a href='/profile/{{loan.Lender}}'>{{loan.Lender}}</a></p>
-            <p>Borrower: <a href='/profile/{{loan.Receiver}}'>{{loan.Receiver}}</a></p>
-            <p>Amount: ฿{{loan.Amount}}</p>
-            <p>End Date: {{JSON.stringify(loan.ExpectedEndDate)}}</p>
-            <p>Interest Rate: {{loan.InterestRate}}</p>
-            <p>Coinbase Transaction ID: {{loan.Loan_CoinbaseTxnId}}
-            <p>Last Updated: {{JSON.stringify(loan.updatedAt)}}</p>
+
+            <h3>Transaction Information</h3>
+            <p><b>Lender</b>: <a href='/profile/{{loan.Lender}}'>{{loan.Lender}}</a></p>
+            <p><b>Borrower</b>: <a href='/profile/{{loan.Receiver}}'>{{loan.Receiver}}</a></p>
+            <p><b>Amount</b>: ฿{{loan.Amount}}</p>
+            <p><b>End Date</b>: {{loan.ExpectedEndDate.toString()}}</p>
+            <p><b>Interest Rate</b>: {{loan.InterestRate}}</p>
+            <p><b>Coinbase Transaction ID</b>: {{loan.Loan_CoinbaseTxnId}}
+            <p><b>Last Updated</b>: {{loan.updatedAt.toString()}}</p>
+            <div class="space"></div>
+
             {% if userIsLender %}
-            <a href="/acceptLoan/{{loan.id}}">Accept</a>
-            <a href="/denyLoan/{{loan.id}}">Deny</a>
+            <a class="btn" href="/acceptLoan/{{loan.id}}">Accept</a>
+            <a class="btn" href="/denyLoan/{{loan.id}}">Deny</a>
             {% elif userIsReceiver %}
+
             <a href = "/payLoan/{{loan.id}}">Pay the Loan</a>
             {% endif %}
+
+            {% if hasFill %}
+            <h3>Fulfillment Information</h3>
             {% for fulfillment in fulfillments %}
             <div class="fulfillment">
-                <h3>Fulfillment ID {{fulfillment.id}}</h3>
-                <p>Amount Paid: ฿{{fulfillment.Amount}}</p>
-                <p>Fulfilled On: {{fulfillment.createdAt.toString()}}</p>
-                <p>Coinbase Transaction ID: {{fulfillment.CoinbaseTxnId}}</p>
+                <h4>Fulfillment ID: {{fulfillment.id}}</h4>
+                <p><b>Amount Paid</b>: ฿{{fulfillment.Amount}}</p>
+                <p><b>Fulfilled On</b>: {{fulfillment.createdAt.toString()}}</p>
+                <p><b>Coinbase Transaction ID</b>: {{fulfillment.CoinbaseTxnId}}</p>
             </div>
             {% endfor %}
+            {% endif %}
         </div>
     </div>
 
