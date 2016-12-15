@@ -29,6 +29,7 @@
         display: flex;
         flex-direction: row;
         align-items: center;
+        width: 30%;
 
         input {
             height: 30px;
@@ -37,6 +38,7 @@
             border-radius: 2px 0 0 2px;
             border: 1px solid #dddddd;
             border-right: none;
+            width: 100%;
         }
 
         #submit-btn {
@@ -54,7 +56,7 @@
     }
 
     .options {
-        width: 60%;
+        width: 50%;
         display: flex;
         flex-direction: row;
         justify-content: space-between;

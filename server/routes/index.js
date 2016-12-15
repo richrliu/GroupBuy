@@ -306,7 +306,11 @@ function showProfile(user, req, res, isSelf) {
           }
         }).then(function(theuser){
           if (theuser) {
-            res.render('profile', {profile: profile, isSelf: isSelf, ranking: theuser.Ranking });
+              curr_ranking = theuser.Ranking;
+              if (!curr_ranking) {
+                  curr_ranking = 0;
+              }
+            res.render('profile', {profile: profile, isSelf: isSelf, ranking: curr_ranking });
           } else {
             res.render('profile', {profile: profile, isSelf: isSelf });
           }
