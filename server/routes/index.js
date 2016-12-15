@@ -107,9 +107,9 @@ router.post('/register', function(req, res, next) {
   if (hashedPW == hashedPWConfirm) {
     models.Users.findOne({where: {Username: username, Password: hashedPW}}).then(function(user) {
       if (user === null) {
-        models.Users.create({Username: username, Password: hashedPW}).then(function(user) {
+        models.Users.create({Username: username, Password: hashedPW, Ranking: 0}).then(function(user) {
           req.session.loggedinuser = user.dataValues; //this is what logs users in
-          res.render('profilesetup');
+          res.redirect('/profilesetup');
         });
       } else {
         res.render('index', { error: 'User already exists. Did you forgot your password?' });
@@ -863,6 +863,31 @@ router.post('/newFulfillment', function(req, res, next) {
       var newRemaining = loan.AmountRemaining - amount;
       var isLate = new Date() < loan.endDate;
       var newCompletionStatus = newRemaining <= 0 ? (isLate ? 'completed_late' : 'completed') : (isLate ? 'in_progress_late' : 'in_progress');
+      models.User.findOne({
+        where: {
+          Username: loan.Receiver
+        }
+      }).then(function(borrower) {
+        models.Loan.findAll({
+          where: {
+            Receiver: borrower.Username
+          }
+        }).then(function(past_loans) {
+          var numCompletedOnTime = 0;
+          var numCompleted = 0;
+          pastLoans.forEach(function(past_loan) {
+            if (past_loan.CompletionStatus == 'completed' || past_loan.CompletionStatus == 'completed_late') {
+              numCompleted++;
+              if (past_loan.CompletionStatus == 'completed') {
+                numCompletedOnTime++;
+              }
+            }
+            borrower.updateAttributes({
+              Ranking: numCompletedOnTime/numCompleted
+            });
+          });
+        });
+      });
       loan.updateAttributes({
         AmountRemaining: newRemaining,
         CompletionStatus: newCompletionStatus
