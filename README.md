@@ -10,6 +10,8 @@ This should install Gulp and other required node dependencies. It also creates a
 
 To run the server, run `gulp` in Terminal. 
 
+To migrate the database, run `node_modules/.bin/sequelize db:migrate`.
+
 ### Development 
 
 To create a module using sequelize-cli, run `node_modules/.bin/sequelize model:create --name [ModelName] --attributes "[Attr1]:[DataType1], [Attr2]:[DataType2]"`.

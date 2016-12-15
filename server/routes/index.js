@@ -747,14 +747,15 @@ router.get('/acceptTokenStep', function(req, res, next) {
           if (acct.primary && acct.currency == 'BTC') {
             acct.getTransactions({}, function(err, txns) {
               txns.forEach(function(txn) {
-                console.log("A txn");
                 if (txn.id == req.session.prevAcceptTxnId) {
                   txn.complete(function(err, new_txn) {
-                    console.log(new_txn);
-                    req.session.prevAceptTxnId = null;
+                    req.session.prevAcceptTxnId = null;
                   });
                 }
               });
+              // txns[0].complete(function(err, new_txn) {
+              //   req.session.prevAcceptTxnId = null;
+              // });
             });
           }
         });
