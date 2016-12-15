@@ -650,7 +650,7 @@ router.get('/requestTokenStep', function(req, res, next) {
           }
         });
       });
-      res.send('No code recieved from coinbase sorry lol'); // TODO FIX
+      res.redirect('/');
     });
   }
 });
@@ -698,7 +698,7 @@ router.get('/fulfillTokenStep', function(req, res, next) {
           }
         });
       });
-      res.redirect('No code recieved from coinbase sorry lol'); // TODO FIX
+      res.redirect('/');
     });
   }
 });
@@ -739,7 +739,7 @@ router.get('/acceptTokenStep', function(req, res, next) {
           }
         });
       });
-      res.send('No code recieved from coinbase sorry lol'); // TODO FIX
+      res.redirect('/');
     });
   }
 });
@@ -772,7 +772,7 @@ router.get('/rankingTokenStep', function(req, res, next) {
           }
         });
       });
-      res.send('Trolol'); // TODO FIX
+      res.redirect('/');
     });
   }
 });
